@@ -37,16 +37,16 @@ class Solution:
                 if self.grid.nodes[i, j]['solved']:
                     if self.grid.nodes[i, j]['value'] == -1:
                         if self.grid.nodes[i, j]['flagged']:
-                            string = string + ' . '
+                            string = string + '.'
                         else:
-                            string = string + ' * '
+                            string = string + '*'
                     else:
                         if self.grid.nodes[i, j]['value'] == 0:
-                            string = string + '   '
+                            string = string + ' '
                         else:
-                            string = string + ' ' + str(self.grid.nodes[i, j]['value']) + ' '
+                            string = string + str(self.grid.nodes[i, j]['value'])
                 else:
-                    string = string + ' _ '
+                    string = string + '-'
             string = string + '\n'
         return string
 
@@ -227,6 +227,3 @@ def is_complete(solution):
         if not solution.grid.nodes[n]['solved']:
             return False
     return True
-
-
-

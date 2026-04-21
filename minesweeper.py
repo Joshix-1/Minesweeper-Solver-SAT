@@ -67,12 +67,18 @@ class Board:
     def reveal_nodes(self, nodes):
         revealed_nodes = []
         for n in nodes:
-            revealed_nodes = revealed_nodes + self.reveal_node(n)
+            revealed_nodes.extend(self.reveal_node(n))
         return revealed_nodes
 
     def reset_reveals(self):
         for n in self.grid.nodes:
             self.grid.nodes[n]['revealed'] = False
+
+    def has_reveal(self) -> bool:
+        for n in self.grid.nodes:
+            if self.grid.nodes[n]['revealed']:
+                return True
+        return False
 
     def value_at(self, node):
         return self.grid.nodes[node]['value']

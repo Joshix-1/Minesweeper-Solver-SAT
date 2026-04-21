@@ -10,7 +10,7 @@
 * Not all boards are solvable: it may be impossible to determine whether or not a cell is a mine, so guessing can be necessary.
 
 ## About:
-* This project is a Minesweeper game implemented in Pygame which showcases a Minesweeper-solving algorithm I programmed.
+* This project is a Minesweeper game which showcases a Minesweeper-solving algorithm I programmed.
 
 * In addition to the features included in many standard implementations of Minesweeper, Minesweeper-SAT lets the player use a Minesweeper solver to assist them
 in solving difficult boards.
@@ -57,7 +57,7 @@ Keys | Actions
   _Right Click_ | Flag cell
 
 ## Requirements:
-This project uses Python 3 and several external libraries (pysat, networkx, bidict, pygame). You can install the requirements by using:
+This project uses Python 3 and several external libraries (pysat, networkx, bidict). You can install the requirements by using:
 
     pip install -r requirements.txt
 
