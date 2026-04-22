@@ -44,55 +44,6 @@ def run_interactive_game_round():
         print("lost")
 
 
-def run_automatic_game_round():
-    init_game_state()
-
-    solver_solution = gs.Solution(gs.board.n_rows, gs.board.n_cols, gs.board.n_mines)
-
-    cuttoff = gs.n_cols * gs.n_rows
-
-    next_solved = set()
-    for i in range(1000):
-        start_len = len(next_solved)
-        for n in solver_solution.grid.nodes:
-            if solver_solution.grid.nodes[n]['flagged']:
-                solver_solution.grid.nodes[n]['solved'] = True
-                solver_solution.grid.nodes[n]['value'] = -1
-        next_solved.update(solve_remainder(solver_solution, cutoff=16))
-        for n in solver_solution.grid.nodes:
-            next_solved.update(sat_inspect_cell(solver_solution, n, depth=1))
-        end_len = len(next_solved)
-        if start_len == end_len:
-            break
-    solver_tiles = {}
-    for n in next_solved:
-        solver_tiles[n] = solver_solution.grid.nodes[n]['flagged']
-    for n in solver_solution.grid.nodes:
-        if solver_solution.grid.nodes[n]['flagged']:
-            solver_tiles[n] = True
-
-
-    while gs.state == 0:
-        print(gs.player_solution)
-
-        remainder_solved = gs.solve_remainder(gs.player_solution, cutoff=cuttoff)
-        remainder_revealed = gs.board.reveal_nodes(remainder_solved)
-        gs.update_solution(gs.player_solution, remainder_revealed)
-
-        gs.state = check_solution(gs.board, gs.player_solution)
-
-        cuttoff -= len(remainder_revealed)
-
-        time.sleep(0.1)
-
-    print(gs.player_solution)
-    if gs.state == 1:
-        print("won")
-    if gs.state == -1:
-        print("lost")
-
-
 if __name__ == "__main__":
     while True:
-        # run_interactive_game_round()
-        run_automatic_game_round()
+        run_interactive_game_round()
