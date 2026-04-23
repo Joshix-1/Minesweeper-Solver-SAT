@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import time
 
+import pygame
+
 from solver_implementation import *
 import game_state as gs
 from rendering import *
@@ -57,8 +59,9 @@ def draw_board():
 def run_interactive_game_round():
     init_game_state()
 
+    pygame.joystick.init()
+
     while gs.state == 0:
-        print(gs.player_solution)
         draw_board()
 
         move = get_move()
@@ -67,11 +70,13 @@ def run_interactive_game_round():
 
         gs.state = check_solution(gs.board, gs.player_solution)
 
-    print(gs.player_solution)
-    if gs.state == 1:
-        print("won")
-    if gs.state == -1:
-        print("lost")
+    while True:
+        draw_board()
+
+        if gs.state == 1:
+            print("won")
+        if gs.state == -1:
+            print("lost")
 
 
 if __name__ == "__main__":
