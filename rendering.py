@@ -3,9 +3,37 @@ from rgbmatrix import *
 
 type DrawPixelFn = Callable[[tuple[int, int], tuple[int, int, int]], None]
 
+def create_rgbmatrix() -> RGBMatrix:
+    options = RGBMatrixOptions()
+
+    # options.hardware_mapping = self.args.led_gpio_mapping
+    options.rows = 64
+    options.cols = 64
+    # options.chain_length = self.args.led_chain
+    # options.parallel = self.args.led_parallel
+    # options.row_address_type = self.args.led_row_addr_type
+    # options.multiplexing = self.args.led_multiplexing
+    # options.pwm_bits = self.args.led_pwm_bits
+    # options.brightness = self.args.led_brightness
+    # options.pwm_lsb_nanoseconds = self.args.led_pwm_lsb_nanoseconds
+    # options.led_rgb_sequence = self.args.led_rgb_sequence
+    # options.pixel_mapper_config = self.args.led_pixel_mapper
+    # options.panel_type = self.args.led_panel_type
+    # options.pwm_dither_bits = self.args.led_pwm_dither_bits
+    # options.limit_refresh_rate_hz = self.args.led_limit_refresh
+
+    options.show_refresh_rate = 1
+
+    # options.gpio_slowdown = self.args.led_slowdown_gpio
+    options.disable_hardware_pulsing = True
+    options.drop_privileges=False
+
+    matrix = RGBMatrix(options = options)
+    return matrix
+
 def draw_pixel(x: int, y: int, colour: tuple[int, int, int]) -> None:
     # TODO
-    matrix = RGBMatrix()
+    matrix = create_rgbmatrix()
     matrix.SetPixel(x, y, *colour)
 
 def draw_4x4_number(x: int, y: int, number: int, drawpx: DrawPixelFn) -> None:
