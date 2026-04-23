@@ -31,10 +31,14 @@ def create_rgbmatrix() -> RGBMatrix:
     matrix = RGBMatrix(options = options)
     return matrix
 
-def draw_pixel(x: int, y: int, colour: tuple[int, int, int]) -> None:
-    # TODO
-    matrix = create_rgbmatrix()
-    matrix.SetPixel(x, y, *colour)
+
+
+
+def draw_4x4_flag(x: int, y: int, drawpx: DrawPixelFn) -> None:
+    pass
+
+def draw_4x4_mine(x: int, y: int, drawpx: DrawPixelFn) -> None:
+    pass
 
 def draw_4x4_number(x: int, y: int, number: int, drawpx: DrawPixelFn) -> None:
     # SEE: https://deathsythe.itch.io/smallpxnumbers

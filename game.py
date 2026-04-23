@@ -3,6 +3,7 @@ import time
 
 from solver_implementation import *
 import game_state as gs
+from rendering import *
 
 def get_move() -> tuple[int, int]:
     while True:
@@ -25,11 +26,40 @@ def init_game_state():
     gs.new_state()
 
 
+matrix = create_rgbmatrix()
+
+offscreen_canvas = matrix.CreateFrameCanvas()
+
+def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
+    x, y = pos
+    offscreen_canvas.SetPixel(x, y, *colour)
+
+def draw_board():
+    global offscreen_canvas
+    self = gs.player_solution
+    for i in range(self.n_rows):
+        for j in range(self.n_cols):
+            if self.grid.nodes[i, j]['solved']:
+                if self.grid.nodes[i, j]['value'] == -1:
+                    if self.grid.nodes[i, j]['flagged']:
+                        draw_4x4_flag(i, j, drawpx=draw_pixel)
+                    else:
+                        draw_4x4_mine(i, j, drawpx=draw_pixel)
+                else:
+                    if self.grid.nodes[i, j]['value'] == 0:
+                        pass
+                    else:
+                        draw_4x4_number(i, j, self.grid.nodes[i, j]['value'], drawpx=draw_pixel)
+
+    offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+
+
 def run_interactive_game_round():
     init_game_state()
 
     while gs.state == 0:
         print(gs.player_solution)
+        draw_board()
 
         move = get_move()
 
