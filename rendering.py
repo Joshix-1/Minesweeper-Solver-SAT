@@ -1,6 +1,8 @@
 from collections.abc import Callable
 from rgbmatrix import *
 
+WHITE = (255, 255, 255)
+
 type DrawPixelFn = Callable[[tuple[int, int], tuple[int, int, int]], None]
 
 def create_rgbmatrix() -> RGBMatrix:
@@ -34,8 +36,8 @@ def create_rgbmatrix() -> RGBMatrix:
 
 def draw_4x4_flag(x: int, y: int, drawpx: DrawPixelFn) -> None:
     drawpx((x + 1, y + 1), (255, 0, 0))
-    drawpx((x + 2, y + 1), (255, 255, 255))
-    drawpx((x + 2, y + 2), (255, 255, 255))
+    drawpx((x + 2, y + 1), WHITE)
+    drawpx((x + 2, y + 2), WHITE)
 
 
 def draw_4x4_mine(x: int, y: int, drawpx: DrawPixelFn) -> None:
@@ -142,7 +144,7 @@ NUMBER_COLOURED_PIXELS: dict[int, frozenset[tuple[int, int]]] = {
 
 def draw_4x4_number(x: int, y: int, number: int, drawpx: DrawPixelFn) -> None:
     bg_colour = (42, 42, 42)
-    colour = (255, 255, 255)
+    colour = WHITE
 
     if number == 1:
         colour = (24, 22, 198) # blue
@@ -159,7 +161,7 @@ def draw_4x4_number(x: int, y: int, number: int, drawpx: DrawPixelFn) -> None:
     elif number == 7:
         colour = (66, 88, 40) # dark green
     elif number == 8:
-        colour = (255, 255, 255) # black is hard with leds
+        colour = WHITE # black is hard with leds
     elif number == 9:
         colour = (239, 219, 35) # yellow
 

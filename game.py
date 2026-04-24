@@ -27,8 +27,9 @@ def init_game_state():
 
 
 matrix = create_rgbmatrix()
-
 offscreen_canvas = matrix.CreateFrameCanvas()
+highlighted_pos: None | tuple[int, int] = None
+
 
 def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
     x, y = pos
@@ -41,28 +42,40 @@ def draw_board():
 
     self = gs.player_solution
     for i in range(self.n_rows):
+        x = i * 4
         for j in range(self.n_cols):
             if self.grid.nodes[i, j]['solved']:
                 if self.grid.nodes[i, j]['value'] == -1:
                     if self.grid.nodes[i, j]['flagged']:
-                        draw_4x4_flag(i, j, drawpx=draw_pixel)
+                        draw_4x4_flag(x, j * 4, drawpx=draw_pixel)
                     else:
-                        draw_4x4_mine(i, j, drawpx=draw_pixel)
+                        draw_4x4_mine(x, j * 4, drawpx=draw_pixel)
                 else:
-                    draw_4x4_number(i, j, self.grid.nodes[i, j]['value'], drawpx=draw_pixel)
+                    draw_4x4_number(x, j * 4, self.grid.nodes[i, j]['value'], drawpx=draw_pixel)
+
+    if highlighted_pos:
+        (x, y) = highlighted_pos
+        x *= 4
+        y *= 4
+        draw_pixel((x, y), WHITE)
+        draw_pixel((x + 4, y), WHITE)
+        draw_pixel((x, y + 4), WHITE)
+        draw_pixel((x + 4, y + 4), WHITE)
 
     offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
     time.sleep(1e-6)  # small sleep
 
 
 def run_interactive_game_round():
+    global highlighted_pos
     init_game_state()
-
 
     while gs.state == 0:
         draw_board()
 
         move = get_move()
+
+        highlighted_pos = move
 
         gs.do_player_move(move)
 
