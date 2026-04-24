@@ -63,7 +63,6 @@ def draw_board():
         draw_pixel((x + 4, y + 4), WHITE)
 
     offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
-    time.sleep(1e-6)  # small sleep
 
 
 def run_interactive_game_round():
@@ -80,9 +79,11 @@ def run_interactive_game_round():
         gs.do_player_move(move)
 
         gs.state = check_solution(gs.board, gs.player_solution)
+        time.sleep(1e-6)  # small sleep
 
     while True:
         draw_board()
+        time.sleep(1e-6)  # small sleep
 
         if gs.state == 1:
             print("won")
