@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import time
 
-import pygame
-
 from solver_implementation import *
 import game_state as gs
 from rendering import *
@@ -38,6 +36,9 @@ def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
 
 def draw_board():
     global offscreen_canvas
+
+    offscreen_canvas.Fill(0, 0, 0)
+
     self = gs.player_solution
     for i in range(self.n_rows):
         for j in range(self.n_cols):
@@ -48,18 +49,15 @@ def draw_board():
                     else:
                         draw_4x4_mine(i, j, drawpx=draw_pixel)
                 else:
-                    if self.grid.nodes[i, j]['value'] == 0:
-                        pass
-                    else:
-                        draw_4x4_number(i, j, self.grid.nodes[i, j]['value'], drawpx=draw_pixel)
+                    draw_4x4_number(i, j, self.grid.nodes[i, j]['value'], drawpx=draw_pixel)
 
     offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+    time.sleep(1e-6)  # small sleep
 
 
 def run_interactive_game_round():
     init_game_state()
 
-    pygame.joystick.init()
 
     while gs.state == 0:
         draw_board()
