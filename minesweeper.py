@@ -1,10 +1,10 @@
 import random
 
 import networkx as nx
-
+from collections.abc import Iterable
 
 class Board:
-    def __init__(self, n_rows, n_cols, n_mines=0):
+    def __init__(self, n_rows, n_cols, n_mines=0, mines: frozenset[tuple[int, int]] | None = None):
         self.n_rows = n_rows
         self.n_cols = n_cols
         self.n_mines = n_mines
@@ -23,13 +23,17 @@ class Board:
             self.grid.nodes[n]['value'] = 0
             self.grid.nodes[n]['revealed'] = False
 
-        mine_positions = [i for i in range(self.n_rows * self.n_cols)]
-        random.shuffle(mine_positions)
+        if mines is None:
+            mine_positions = [i for i in range(self.n_rows * self.n_cols)]
+            random.shuffle(mine_positions)
 
-        for i in range(self.n_mines):
-            x = mine_positions[i] % self.n_rows
-            y = int(mine_positions[i] / self.n_rows)
-            self.grid.nodes[(x, y)]['value'] = -1
+            for i in range(self.n_mines):
+                x = mine_positions[i] % self.n_rows
+                y = int(mine_positions[i] / self.n_rows)
+                self.grid.nodes[(x, y)]['value'] = -1
+        else:
+            for mine in mines:
+                self.grid.nodes[mine]['value'] = -1
 
         for n in self.grid.nodes:
             if self.value_at(n) == -1:
@@ -82,6 +86,11 @@ class Board:
 
     def value_at(self, node):
         return self.grid.nodes[node]['value']
+
+    def get_mines(self) -> Iterable[tuple[int, int]]:
+        for n in self.grid.nodes:
+            if self.grid.nodes[n]['value'] == -1:
+                yield n
 
 
 def generate_board(rows, cols, mines):

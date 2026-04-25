@@ -1,6 +1,7 @@
 import time
 import json
 from solver_implementation import *
+from random_fair_boards import get_fair_mines
 
 n_rows: int = 16
 n_cols: int = 16
@@ -28,11 +29,15 @@ def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = Fal
         start_time = time.time()
         return
 
-    board = (
-        generate_fair_board(n_rows, n_cols, n_mines, initial, max_depth=1, remainder_cutoff=16, max_attempts=1000)
-        if force_solvable
-        else generate_fun_board(n_rows, n_cols, n_mines, initial, max_attempts=1000)
-    )
+    if n_rows == 16 and n_cols == 16:
+        board = Board(n_rows, n_cols, n_mines, mines=get_fair_mines(initial))
+    else:
+        print("generating board")
+        board = (
+            generate_fair_board(n_rows, n_cols, n_mines, initial, max_depth=1, remainder_cutoff=16, max_attempts=1000)
+            if force_solvable
+            else generate_fun_board(n_rows, n_cols, n_mines, initial, max_attempts=1000)
+        )
 
     update_solution(player_solution, board.reveal_node(initial))
 
