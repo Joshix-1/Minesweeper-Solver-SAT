@@ -14,7 +14,7 @@ state = 0  # -1: loss, 0: ongoing, 1: win
 start_time = 0
 
 
-def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = True):
+def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = False):
     global board
     global player_solution
     global start_time
