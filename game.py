@@ -1,4 +1,5 @@
 #!venv/bin/python3
+import os
 import random
 import time
 
@@ -34,9 +35,13 @@ def init_game_state():
     gs.n_mines = gs.n_rows * gs.n_cols // 6
     gs.new_state()
 
+USE_RGB_MATRIX = not os.environ.get("DO_NOT_USE_RGB_MATRIX")
+if USE_RGB_MATRIX:
+    matrix = create_rgbmatrix()
+    offscreen_canvas = matrix.CreateFrameCanvas()
+else:
+    matrix = None
 
-#matrix = create_rgbmatrix()
-#offscreen_canvas = matrix.CreateFrameCanvas()
 highlighted_pos: None | tuple[int, int] = None
 
 
@@ -45,7 +50,9 @@ def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
     offscreen_canvas.SetPixel(x, y, *colour)
 
 def draw_board():
-    print(gs.player_solution);return;
+    if matrix is None:
+        print(gs.player_solution)
+        return
     global offscreen_canvas
 
     offscreen_canvas.Fill(0, 0, 0)
