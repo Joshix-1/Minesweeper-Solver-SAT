@@ -62,12 +62,11 @@ def draw_board():
         x = i * 4
         for j in range(self.n_cols):
             node = self.grid.nodes[i, j]
-            if node['solved']:
+            if node['flagged']:
+                draw_4x4_flag(x, j * 4, drawpx=draw_pixel)
+            elif node['solved']:
                 if node['value'] == -1:
-                    if node['flagged']:
-                        draw_4x4_flag(x, j * 4, drawpx=draw_pixel)
-                    else:
-                        draw_4x4_mine(x, j * 4, drawpx=draw_pixel)
+                    draw_4x4_mine(x, j * 4, drawpx=draw_pixel)
                 else:
                     draw_4x4_number(x, j * 4, node['value'], drawpx=draw_pixel)
 
@@ -123,7 +122,10 @@ def run_automatic_game_round():
 
         highlighted_pos = move
 
-        gs.do_player_move(move, flag=gs.board.value_at(move) == -1)
+        is_flag = gs.board.value_at(move) == -1
+        gs.do_player_move(move, flag=is_flag)
+        if is_flag:
+            print("flagged", move)
 
 
         gs.state = check_solution(gs.board, gs.player_solution)

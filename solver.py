@@ -113,15 +113,16 @@ def sat_inspect_cell(solution, source, depth=1):
 
     # find all variables which have only one value over all solutions to CNF
     discovered_variables = []
-    for j in range(len(solutions[0])):
-        certain = True
-        first = solutions[0][j]
-        for i in range(len(solutions)):
-            if not solutions[i][j] == first:
-                certain = False
-                break
-        if certain:
-            discovered_variables.append(first)
+    if solutions:
+        for j in range(len(solutions[0])):
+            certain = True
+            first = solutions[0][j]
+            for i in range(len(solutions)):
+                if not solutions[i][j] == first:
+                    certain = False
+                    break
+            if certain:
+                discovered_variables.append(first)
 
     # return newly solved nodes
     solved_nodes = []
