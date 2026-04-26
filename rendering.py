@@ -167,10 +167,9 @@ def draw_4x4_number(x: int, y: int, number: int, drawpx: DrawPixelFn) -> None:
 
     coloured = NUMBER_COLOURED_PIXELS.get(number, EMPTY_SET)
 
-    y_range = range(y, y + 4)
-    for x in range(x, x + 4):
-        for y in y_range:
-            if (x, y) in coloured:
-                drawpx((x, y), colour)
-            else:
-                drawpx((x, y), bg_colour)
+    for dx in range(4):
+        for dy in range(4):
+            drawpx(
+                (x + dx, y + dy),
+                colour if (x, y) in coloured else bg_colour,
+            )
