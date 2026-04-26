@@ -61,14 +61,15 @@ def draw_board():
     for i in range(self.n_rows):
         x = i * 4
         for j in range(self.n_cols):
-            if self.grid.nodes[i, j]['solved']:
-                if self.grid.nodes[i, j]['value'] == -1:
-                    if self.grid.nodes[i, j]['flagged']:
+            node = self.grid.nodes[i, j]
+            if node['solved']:
+                if node['value'] == -1:
+                    if node['flagged']:
                         draw_4x4_flag(x, j * 4, drawpx=draw_pixel)
                     else:
                         draw_4x4_mine(x, j * 4, drawpx=draw_pixel)
                 else:
-                    draw_4x4_number(x, j * 4, self.grid.nodes[i, j]['value'], drawpx=draw_pixel)
+                    draw_4x4_number(x, j * 4, node['value'], drawpx=draw_pixel)
 
     if highlighted_pos:
         (x, y) = highlighted_pos
