@@ -9,6 +9,7 @@ n_mines: int = 42
 
 board: Board = Board(n_rows, n_cols)
 player_solution = Solution(0, 0, 0)
+solver_solution = Solution(0, 0, 0)
 
 state = 0  # -1: loss, 0: ongoing, 1: win
 
@@ -18,19 +19,21 @@ start_time = 0
 def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = False):
     global board
     global player_solution
+    global solver_solution
     global start_time
     global state
 
-    player_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
-
     if not initial:
         board = Board(n_rows, n_cols)
+        player_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
+        solver_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
         state = 0
         start_time = time.time()
         return
 
     if n_rows == 16 and n_cols == 16:
-        board = Board(n_rows, n_cols, n_mines, mines=get_fair_mines(initial))
+        mines = get_fair_mines(initial)
+        board = Board(n_rows, n_cols, n_mines=len(mines), mines=mines)
     else:
         print("generating board")
         board = (
@@ -39,17 +42,27 @@ def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = Fal
             else generate_fun_board(n_rows, n_cols, n_mines, initial, max_attempts=1000)
         )
 
-    update_solution(player_solution, board.reveal_node(initial))
+    revealed = board.reveal_node(initial)
+
+    player_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
+    update_solution(player_solution, revealed)
+    solver_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
+    update_solution(solver_solution, revealed)
 
     state = 0
     start_time = time.time()
 
 
-def do_player_move(move: tuple[int, int]):
+def do_player_move(move: tuple[int, int], flag=False):
     global board
     global player_solution
 
     if not board.has_reveal():
         new_state(move)
+    elif flag:
+        player_solution.grid.nodes[move]['flagged'] = True
+        solver_solution.grid.nodes[move]['flagged'] = True
     else:
-        update_solution(player_solution, board.reveal_node(move))
+        revealed = board.reveal_node(move)
+        update_solution(player_solution, revealed)
+        update_solution(solver_solution, revealed)

@@ -2,7 +2,7 @@
 import random
 import time
 
-from solver import sat_inspect
+from solver import sat_inspect, Solution
 from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
@@ -105,18 +105,26 @@ def run_automatic_game_round():
     global highlighted_pos
     init_game_state()
 
+    _time = time.perf_counter()
+
     while gs.state == 0:
         draw_board()
 
-        nodes = sat_inspect(gs.player_solution)
+        nodes = sat_inspect(gs.solver_solution)
         move = random.choice(nodes) if nodes else (random.randrange(gs.board.n_cols), random.randrange(gs.board.n_rows))
 
         highlighted_pos = move
 
-        gs.do_player_move(move)
+        gs.do_player_move(move, flag=gs.board.value_at(move) == -1)
+
 
         gs.state = check_solution(gs.board, gs.player_solution)
-        time.sleep(1)
+        took = time.perf_counter() - _time
+        if took < 1:
+            time.sleep(1 - took)
+        else:
+            print(f"took {took}s")
+        _time = time.perf_counter()
 
 
     draw_board()
@@ -124,7 +132,8 @@ def run_automatic_game_round():
         print("won")
     if gs.state == -1:
         print("lost")
-    time.sleep(1)  # small sleep
+
+    time.sleep(10)  # small sleep
 
 
 if __name__ == "__main__":

@@ -1010,7 +1010,21 @@ i = random.randrange(len(all_boards))
 def get_fair_mines(initial: tuple[int, int]):
     global i
 
-    while initial in (board := all_boards[i]):
+    x, y = initial
+    initial_with_neighbors = frozenset((
+        initial,
+        (x + 1, y),
+        (x, y + 1),
+        (x + 1, y + 1),
+        (x - 1, y),
+        (x, y - 1),
+        (x - 1, y - 1),
+        (x - 1, y + 1),
+        (x + 1, y - 1),
+    ))
+    assert len(initial_with_neighbors) == 9
+
+    while initial_with_neighbors & (board := all_boards[i]):
         i = (i + 1) % len(all_boards)
 
     return board
