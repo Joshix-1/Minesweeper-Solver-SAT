@@ -76,9 +76,9 @@ def draw_board():
         x *= 4
         y *= 4
         draw_pixel((x, y), WHITE)
-        draw_pixel((x + 4, y), WHITE)
-        draw_pixel((x, y + 4), WHITE)
-        draw_pixel((x + 4, y + 4), WHITE)
+        draw_pixel((x + 3, y), WHITE)
+        draw_pixel((x, y + 3), WHITE)
+        draw_pixel((x + 3, y + 3), WHITE)
 
     offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
 
