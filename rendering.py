@@ -143,7 +143,9 @@ NUMBER_COLOURED_PIXELS: dict[int, frozenset[tuple[int, int]]] = {
 }
 
 def draw_4x4_number(x: int, y: int, number: int, drawpx: DrawPixelFn) -> None:
-    bg_colour = (42, 42, 42)
+    if number == 0:
+        return
+    bg_colour = (0, 0, 0)
     colour = WHITE
 
     if number == 1:
