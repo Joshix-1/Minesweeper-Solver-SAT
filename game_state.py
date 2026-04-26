@@ -5,7 +5,7 @@ from random_fair_boards import get_fair_mines
 
 n_rows: int = 16
 n_cols: int = 16
-n_mines: int = 99
+n_mines: int = 42
 
 board: Board = Board(n_rows, n_cols)
 player_solution = Solution(0, 0, 0)
@@ -24,7 +24,7 @@ def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = Fal
     player_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
 
     if not initial:
-        board = Board(n_rows, n_cols, n_mines)
+        board = Board(n_rows, n_cols)
         state = 0
         start_time = time.time()
         return

@@ -1,7 +1,9 @@
-#!/usr/bin/env python3
+#!venv/bin/python3
+import random
 import time
 
-from solver_implementation import *
+from solver import sat_inspect
+from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
 
@@ -29,12 +31,12 @@ def get_move() -> tuple[int, int]:
 def init_game_state():
     gs.n_rows = 16
     gs.n_cols = 16
-    gs.n_mines = gs.n_rows * gs.n_cols // 5
+    gs.n_mines = gs.n_rows * gs.n_cols // 6
     gs.new_state()
 
 
-matrix = create_rgbmatrix()
-offscreen_canvas = matrix.CreateFrameCanvas()
+#matrix = create_rgbmatrix()
+#offscreen_canvas = matrix.CreateFrameCanvas()
 highlighted_pos: None | tuple[int, int] = None
 
 
@@ -43,6 +45,7 @@ def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
     offscreen_canvas.SetPixel(x, y, *colour)
 
 def draw_board():
+    print(gs.player_solution);return;
     global offscreen_canvas
 
     offscreen_canvas.Fill(0, 0, 0)
@@ -98,6 +101,33 @@ def run_interactive_game_round():
             print("lost")
 
 
+def run_automatic_game_round():
+    global highlighted_pos
+    init_game_state()
+
+    while gs.state == 0:
+        draw_board()
+
+        nodes = sat_inspect(gs.player_solution)
+        move = random.choice(nodes) if nodes else (random.randrange(gs.board.n_cols), random.randrange(gs.board.n_rows))
+
+        highlighted_pos = move
+
+        gs.do_player_move(move)
+
+        gs.state = check_solution(gs.board, gs.player_solution)
+        time.sleep(1)
+
+
+    draw_board()
+    if gs.state == 1:
+        print("won")
+    if gs.state == -1:
+        print("lost")
+    time.sleep(1)  # small sleep
+
+
 if __name__ == "__main__":
     while True:
-        run_interactive_game_round()
+        run_automatic_game_round()
+        # run_interactive_game_round()
