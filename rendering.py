@@ -171,5 +171,5 @@ def draw_4x4_number(x: int, y: int, number: int, drawpx: DrawPixelFn) -> None:
         for dy in range(4):
             drawpx(
                 (x + dx, y + dy),
-                colour if (x, y) in coloured else bg_colour,
+                colour if (dx, dy) in coloured else bg_colour,
             )
