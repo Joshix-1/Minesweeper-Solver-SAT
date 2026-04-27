@@ -149,14 +149,12 @@ def run_interactive_game_round():
         gs.state = check_solution(gs.board, gs.player_solution)
         time.sleep(1e-6)  # small sleep
 
-    while True:
-        draw_board()
-        time.sleep(1e-6)  # small sleep
+    draw_board()
+    time.sleep(10)  # long sleep
 
-        if gs.state == 1:
-            print("won")
-        if gs.state == -1:
-            print("lost")
+    while not any_player_input():
+        draw_board()
+        time.sleep(1e-6)
 
 
 def run_automatic_game_round():
