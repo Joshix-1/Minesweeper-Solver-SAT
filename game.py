@@ -65,7 +65,7 @@ def draw_board():
     global offscreen_canvas
 
     if offscreen_canvas is not None:
-        offscreen_canvas.Fill(0, 0, 0)
+        offscreen_canvas.Clear()
     else:
         for x in range(64):
             for y in range(64):
@@ -169,7 +169,7 @@ def run_automatic_game_round():
             is_automatic_game = False
             return
         draw_board()
-        print(f"draw_board took {time.perf_counter() - _time}s")
+        # print(f"draw_board took {time.perf_counter() - _time}s")
 
         try:
             move = next(sat_inspect_generator(gs.solver_solution))

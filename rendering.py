@@ -17,17 +17,17 @@ def create_rgbmatrix() -> RGBMatrix:
     # options.multiplexing = self.args.led_multiplexing
     # options.pwm_bits = self.args.led_pwm_bits
     # options.brightness = self.args.led_brightness
-    # options.pwm_lsb_nanoseconds = self.args.led_pwm_lsb_nanoseconds
+    options.pwm_lsb_nanoseconds = 50
     # options.led_rgb_sequence = self.args.led_rgb_sequence
     # options.pixel_mapper_config = self.args.led_pixel_mapper
     # options.panel_type = self.args.led_panel_type
     # options.pwm_dither_bits = self.args.led_pwm_dither_bits
-    options.limit_refresh_rate_hz = 10  # no limit
+    options.limit_refresh_rate_hz = 0  # no limit
 
     options.show_refresh_rate = 0
 
     # options.gpio_slowdown = self.args.led_slowdown_gpio
-    options.disable_hardware_pulsing = True
+    options.disable_hardware_pulsing = False
     options.drop_privileges=False
 
     matrix = RGBMatrix(options = options)
