@@ -3,15 +3,15 @@ import os
 import random
 import sys
 import time
-import pygame
-import pygame.joystick
 
 from solver import sat_inspect_generator, Solution
 from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
 
-pygame.init()
+os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = True
+import pygame, pygame.event, pygame.joystick
+pygame.joystick.init()
 
 if False:
     boards = set()
@@ -123,30 +123,28 @@ def run_interactive_game_round():
         dx = 0
         dy = 0
 
-        for j in range(pygame.joystick.get_count()):
-            joystick = pygame.joystick.Joystick(j)
-
-            if abs(axis_0 := joystick.get_axis(0)) > 0.15:
-                dx += 1 if axis_0 > 0 else -1
-
-            if abs(axis_1 := joystick.get_axis(1)) > 0.15:
-                dy += 1 if axis_1 > 0 else -1
+        for event in pygame.event.get():
+            if event.type == pygame.JOYAXISMOTION:
+                if abs(event.value) > 0.5:
+                    normed_value = 1 if event.value > 0 else -1
+                    if event.axis == 0:
+                        dx += normed_value
+                    else:
+                        dy += normed_value
+            if event.type == pygame.JOYBUTTONUP:
+                if event.button == 1: # keine Bombe
+                    gs.reveal_node(highlighted_pos)
+                if event.button == 0: # flagge tooglen
+                    gs.toggle_flag(highlighted_pos)
+                if event.button in (8, 9): # cancel Game
+                    is_automatic_game = True
+                    return
 
         if dx or dy:
             highlighted_pos = (
                 (highlighted_pos[0] + dx) % gs.n_cols,
                 (highlighted_pos[1] + dy) % gs.n_rows,
             )
-
-        for j in range(pygame.joystick.get_count()):
-            joystick = pygame.joystick.Joystick(j)
-            if joystick.get_button(1) == 1: # keine Bombe
-                gs.reveal_node(highlighted_pos)
-            if joystick.get_button(0) == 1: # flagge tooglen
-                gs.toggle_flag(highlighted_pos)
-            if joystick.get_button(8) == 1 or joystick.get_button(9) == 1: # cancel Game
-                is_automatic_game = True
-                return
 
         gs.state = check_solution(gs.board, gs.player_solution)
         time.sleep(1e-5)  # small sleep
@@ -211,11 +209,10 @@ def run_automatic_game_round():
     time.sleep(10)  # small sleep
 
 def any_player_input():
-    for i in range(pygame.joystick.get_count()):
-        joystick = pygame.joystick.Joystick(i)
-        if any(joystick.get_button(j) == 1 for j in range(joystick.get_numbuttons())):
+    for event in pygame.event.get():
+        if event.type == pygame.JOYAXISMOTION:
             return True
-        if any(abs(joystick.get_axis(j)) > 0.1 for j in range(joystick.get_numaxes())):
+        if event.type == pygame.JOYBUTTONUP:
             return True
     return False
 
