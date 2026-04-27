@@ -134,11 +134,12 @@ def sat_inspect_cell(solution, source, depth=1):
     return solved_nodes
 
 
-def sat_inspect(solution, depth=1):
-    solved_nodes = []
+def sat_inspect_generator(solution, depth=1):
     for n in solution.grid.nodes:
-        solved_nodes += sat_inspect_cell(solution, n, depth=depth)
-    return solved_nodes
+        yield from sat_inspect_cell(solution, n, depth=depth)
+
+def sat_inspect(solution, depth=1):
+    return list(sat_inspect_generator(solution, depth))
 
 
 def solve_remainder(solution, cutoff=16):

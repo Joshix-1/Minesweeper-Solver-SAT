@@ -1,9 +1,10 @@
 #!venv/bin/python3
 import os
 import random
+import sys
 import time
 
-from solver import sat_inspect, Solution
+from solver import sat_inspect_generator, Solution
 from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
@@ -130,8 +131,11 @@ def run_automatic_game_round():
     while gs.state == 0:
         draw_board()
 
-        nodes = sat_inspect(gs.solver_solution)
-        move = random.choice(nodes) if nodes else (random.randrange(gs.board.n_cols), random.randrange(gs.board.n_rows))
+        try:
+            move = next(sat_inspect_generator(gs.solver_solution))
+        except StopIteration:
+            print("sat_inspect did not find move")
+            move = (random.randrange(gs.board.n_cols), random.randrange(gs.board.n_rows))
 
         highlighted_pos = move
 

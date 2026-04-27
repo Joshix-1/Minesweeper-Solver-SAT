@@ -12,8 +12,7 @@ def solve(board, initial, max_depth=1, remainder_cutoff=0):
 
     depth = 0
     for i in range(10000):
-        solved = sat_inspect(solution, depth=depth)
-        revealed = board.reveal_nodes(solved)
+        revealed = board.reveal_nodes(sat_inspect_generator(solution, depth=depth))
         for node, value in revealed:
             solution.grid.nodes[node]['solved'] = True
             solution.grid.nodes[node]['value'] = value
@@ -38,14 +37,16 @@ def solve(board, initial, max_depth=1, remainder_cutoff=0):
 
 
 def check_solution(board, solution):
+    has_unsolved = False
     for n in board.grid.nodes:
-        if solution.grid.nodes[n]['solved'] and board.grid.nodes[n]['value'] == -1 \
-          and not solution.grid.nodes[n]['flagged']:
-            return -1
-    for n in board.grid.nodes:
-        if not solution.grid.nodes[n]['solved'] and board.grid.nodes[n]['value'] != -1:
-            return 0
-    return 1
+        node = solution.grid.nodes[n]
+        if node['solved']:
+           if node['value'] == -1 and not node['flagged']:
+               return -1
+        elif node['value'] != -1:
+            has_unsolved = True
+
+    return 0 if has_unsolved else 1
 
 
 def generate_fair_board(n_rows, n_cols, n_mines, initial, max_depth=1, remainder_cutoff=16, max_attempts=1000):
