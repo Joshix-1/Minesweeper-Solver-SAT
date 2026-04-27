@@ -112,10 +112,8 @@ def run_interactive_game_round():
     global highlighted_pos
     highlighted_pos = (0, 0)
     global is_automatic_game
-    useJoystick = False
     joystick = None
     if pygame.joystick.get_count() > 0:
-        useJoystick = True
         joystick = pygame.joystick.Joystick(0)
 
     init_game_state()
@@ -129,7 +127,7 @@ def run_interactive_game_round():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 is_automatic_game = True
                 return
-        if useJoystick:
+        if joystick is not None:
             if abs(axis_0    := joystick.get_axis(0)) > 0.1:
                 move = ((move[0] + (1 if axis_0 > 0 else -1)) % gs.board.n_cols, move[1])
 
