@@ -3,7 +3,7 @@ import os
 import random
 import sys
 import time
-import pygame
+import pygame.joystick
 
 from solver import sat_inspect_generator, Solution
 from solver_implementation import check_solution
@@ -204,11 +204,12 @@ def run_automatic_game_round():
     time.sleep(10)  # small sleep
 
 def any_player_input():
-    if pygame.joystick.get_count() > 0:
-        joystick = pygame.joystick.Joystick(0)
-        anyButtonPressed = lambda: any(joystick.get_button(i) == 1 for i in range(joystick.get_numbuttons()))
-        anyAxisMoved = lambda: any(abs(joystick.get_axis(i)) > 0.1 for i in range(joystick.get_numaxes()))
-        return anyButtonPressed() or anyAxisMoved()
+    for i in range(pygame.joystick.get_count()):
+        joystick = pygame.joystick.Joystick(i)
+        if any(joystick.get_button(i) == 1 for i in range(joystick.get_numbuttons())):
+            return True
+        if any(abs(joystick.get_axis(i)) > 0.1 for i in range(joystick.get_numaxes())):
+            return True
     return False
 
 is_automatic_game = True
