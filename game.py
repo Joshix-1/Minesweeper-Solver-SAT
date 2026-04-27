@@ -210,9 +210,9 @@ def run_automatic_game_round():
 def any_player_input():
     for i in range(pygame.joystick.get_count()):
         joystick = pygame.joystick.Joystick(i)
-        if any(joystick.get_button(i) == 1 for i in range(joystick.get_numbuttons())):
+        if any(joystick.get_button(j) == 1 for j in range(joystick.get_numbuttons())):
             return True
-        if any(abs(joystick.get_axis(i)) > 0.1 for i in range(joystick.get_numaxes())):
+        if any(abs(joystick.get_axis(j)) > 0.1 for j in range(joystick.get_numaxes())):
             return True
     return False
 
