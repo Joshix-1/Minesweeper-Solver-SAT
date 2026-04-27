@@ -121,37 +121,21 @@ def run_interactive_game_round():
 
     while gs.state == 0:
         draw_board()
-        dx = 0
-        dy = 0
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                is_automatic_game = True
-                return
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    is_automatic_game = True
-                    return
-                if event.key == pygame.K_LEFT:
-                    dx -= 1
-                if event.key == pygame.K_RIGHT:
-                    dx += 1
-                if event.key == pygame.K_DOWN:
-                    dy -= 1
-                if event.key == pygame.K_UP:
-                    dy += 1
 
         if joystick is not None:
-            if abs(axis_0 := joystick.get_axis(0)) > 0.1:
+            dx = 0
+            dy = 0
+
+            if abs(axis_0 := joystick.get_axis(0)) > 0.5:
                 dx += 1 if axis_0 > 0 else -1
 
-            if abs(axis_1 := joystick.get_axis(1)) > 0.1:
+            if abs(axis_1 := joystick.get_axis(1)) > 0.5:
                 dy += 1 if axis_1 > 0 else -1
 
-        highlighted_pos = (
-            (highlighted_pos[0] + dx) % gs.n_cols,
-            (highlighted_pos[1] + dy) % gs.n_rows,
-        )
+            highlighted_pos = (
+                (highlighted_pos[0] + dx) % gs.n_cols,
+                (highlighted_pos[1] + dy) % gs.n_rows,
+            )
 
         if joystick is not None:
             if joystick.get_button(1) == 1: # keine Bombe
@@ -204,9 +188,10 @@ def run_automatic_game_round():
 
         gs.state = check_solution(gs.board, gs.player_solution)
         took = time.perf_counter() - _time
-        print(f"took {took}s")
-        if took < 1:
-            time.sleep(1 - took)
+        if took < 2:
+            time.sleep(2 - took)
+        else:
+            print(f"took {took}s")
         _time = time.perf_counter()
 
 
