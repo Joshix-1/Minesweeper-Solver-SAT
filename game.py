@@ -53,8 +53,11 @@ if offscreen_canvas is not None:
         x, y = pos
         offscreen_canvas.SetPixel(x, y, *colour)
 else:
+    from PIL import Image
+    image = Image.new("RGB", size=(64, 64))
     def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
-        print(f"draw_pixel({pos}, {colour})")
+        # print(f"draw_pixel({pos}, {colour})")
+        image.putpixel(pos, colour)
 
 
 def draw_board():
@@ -62,6 +65,10 @@ def draw_board():
 
     if offscreen_canvas is not None:
         offscreen_canvas.Fill(0, 0, 0)
+    else:
+        for x in range(64):
+            for y in range(64):
+                image.putpixel((x, y), (0, 0, 0))
 
     self = gs.player_solution
     for i in range(self.n_rows):
@@ -77,24 +84,29 @@ def draw_board():
                 else:
                     draw_4x4_number(x, y, node['value'], drawpx=draw_pixel)
             else:
-                pass # draw empty
-                draw_pixel((x + 1, y + 1), (22, 22, 22))
-                draw_pixel((x + 2, y + 2), (22, 22, 22))
-                draw_pixel((x + 1, y + 2), (22, 22, 22))
-                draw_pixel((x + 2, y + 1), (22, 22, 22))
+                # draw empty
+                for dx in range(4):
+                    for dy in range(4):
+                        draw_pixel((x + dx, y + dy), (22, 22, 22))
 
 
     if highlighted_pos:
         (x, y) = highlighted_pos
         x *= 5
         y *= 5
-        draw_pixel((x, y), WHITE)
-        draw_pixel((x + 3, y), WHITE)
-        draw_pixel((x, y + 3), WHITE)
-        draw_pixel((x + 3, y + 3), WHITE)
+        start_x = max(x - 1, 0)
+        start_y = max(y - 1, 0)
+        end_x = min(x + 4, 63)
+        end_y = min(y + 4, 63)
+        draw_pixel((start_x, start_y), WHITE)
+        draw_pixel((end_x, start_y), WHITE)
+        draw_pixel((start_x, end_y), WHITE)
+        draw_pixel((end_x, end_y), WHITE)
 
     if matrix is not None:
         offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+    else:
+        image.save("frame.png")
 
 
 def run_interactive_game_round():
