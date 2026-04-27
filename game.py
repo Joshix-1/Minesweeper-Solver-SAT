@@ -150,7 +150,7 @@ def run_interactive_game_round():
         time.sleep(1e-6)  # small sleep
 
     draw_board()
-    time.sleep(10)  # long sleep
+    time.sleep(5)  # long sleep
 
     while not any_player_input():
         draw_board()
