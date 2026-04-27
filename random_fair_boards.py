@@ -1024,7 +1024,10 @@ def get_fair_mines(initial: tuple[int, int]):
     ))
     assert len(initial_with_neighbors) == 9
 
+    x = 1
     while initial_with_neighbors & (board := all_boards[i]):
         i = (i + 1) % len(all_boards)
+        x += 1
 
+    print("got fair board in", x)
     return board
