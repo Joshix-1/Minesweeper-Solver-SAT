@@ -112,9 +112,6 @@ def run_interactive_game_round():
     global highlighted_pos
     highlighted_pos = (0, 0)
     global is_automatic_game
-    joystick = None
-    if pygame.joystick.get_count() > 0:
-        joystick = pygame.joystick.Joystick(0)
 
     init_game_state()
 
@@ -122,9 +119,11 @@ def run_interactive_game_round():
     while gs.state == 0:
         draw_board()
 
-        if joystick is not None:
-            dx = 0
-            dy = 0
+        dx = 0
+        dy = 0
+
+        for j in range(pygame.joystick.get_count()):
+            joystick = pygame.joystick.Joystick(j)
 
             if abs(axis_0 := joystick.get_axis(0)) > 0.5:
                 dx += 1 if axis_0 > 0 else -1
