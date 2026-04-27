@@ -126,10 +126,10 @@ def run_interactive_game_round():
         for j in range(pygame.joystick.get_count()):
             joystick = pygame.joystick.Joystick(j)
 
-            if abs(axis_0 := joystick.get_axis(0)) > 0.5:
+            if abs(axis_0 := joystick.get_axis(0)) > 0.15:
                 dx += 1 if axis_0 > 0 else -1
 
-            if abs(axis_1 := joystick.get_axis(1)) > 0.5:
+            if abs(axis_1 := joystick.get_axis(1)) > 0.15:
                 dy += 1 if axis_1 > 0 else -1
 
             highlighted_pos = (
