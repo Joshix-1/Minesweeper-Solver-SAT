@@ -11,7 +11,7 @@ from rendering import *
 
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
 import pygame, pygame.event, pygame.joystick
-pygame.joystick.init()
+pygame.init()
 
 if False:
     boards = set()
