@@ -11,8 +11,9 @@ from rendering import *
 
 if False:
     boards = set()
-    for i in range(1000):
-        initial = random.randrange(13), random.randrange(13)
+    for i in range(2028):
+        pos_idx = i % (13 * 13)
+        initial = pos_idx // 13, pos_idx % 13
         boards.add(frozenset(gs.generate_fair_board(13, 13, 30 + random.randrange(6), initial, max_depth=1, remainder_cutoff=16, max_attempts=1000).get_mines()))
     print(boards)
     sys.exit(0)
