@@ -65,7 +65,7 @@ def draw_board():
     global offscreen_canvas
 
     if offscreen_canvas is not None:
-        offscreen_canvas.Clear()
+        offscreen_canvas.Fill(0, 0, 0)
     else:
         for x in range(64):
             for y in range(64):
