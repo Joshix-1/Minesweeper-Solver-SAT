@@ -42,12 +42,9 @@ def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = Fal
             else generate_fun_board(n_rows, n_cols, n_mines, initial, max_attempts=1000)
         )
 
-    revealed = board.reveal_node(initial)
-
     player_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
-    update_solution(player_solution, revealed)
     solver_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
-    update_solution(solver_solution, revealed)
+    update_solutions((player_solution, solver_solution), board.reveal_node(initial))
 
     state = 0
     start_time = time.time()
@@ -67,6 +64,4 @@ def do_player_move(move: tuple[int, int], flag=False):
         solver_solution.grid.nodes[move]['solved'] = True
         solver_solution.grid.nodes[move]['flagged'] = True
     else:
-        revealed = board.reveal_node(move)
-        update_solution(player_solution, revealed)
-        update_solution(solver_solution, revealed)
+        update_solutions((player_solution, solver_solution), board.reveal_node(move))

@@ -55,24 +55,18 @@ class Board:
             string = string + '\n'
         return string
 
-    def reveal_node(self, node):
+    def reveal_node(self, node: tuple[int, int]) -> Iterable[tuple[tuple[int, int], int]]:
         if self.grid.nodes[node]['revealed']:
-            return []
+            return
         self.grid.nodes[node]['revealed'] = True
-        revealed_nodes = []
+        yield (node, self.value_at(node))
         if self.value_at(node) == 0:
-            revealed_nodes.append((node, self.value_at(node)))
             for n in self.grid.neighbors(node):
-                revealed_nodes = revealed_nodes + self.reveal_node(n)
-        else:
-            revealed_nodes.append((node, self.value_at(node)))
-        return revealed_nodes
+                yield from self.reveal_node(n)
 
-    def reveal_nodes(self, nodes):
-        revealed_nodes = []
+    def reveal_nodes(self, nodes: Iterable[tuple[int, int]]) -> Iterable[tuple[tuple[int, int], int]]:
         for n in nodes:
-            revealed_nodes.extend(self.reveal_node(n))
-        return revealed_nodes
+            yield from self.reveal_node(n)
 
     def reset_reveals(self):
         for n in self.grid.nodes:

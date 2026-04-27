@@ -5,18 +5,18 @@ from solver import *
 def solve(board, initial, max_depth=1, remainder_cutoff=0):
     solution = Solution(board.n_rows, board.n_cols, board.n_mines)
 
-    initial_revealed = board.reveal_node(initial)
-    for node, value in initial_revealed:
+    for node, value in board.reveal_node(initial):
         solution.grid.nodes[node]['solved'] = True
         solution.grid.nodes[node]['value'] = value
 
     depth = 0
     for i in range(10000):
-        revealed = board.reveal_nodes(sat_inspect_generator(solution, depth=depth))
-        for node, value in revealed:
+        revealed_len = 0
+        for node, value in board.reveal_nodes(sat_inspect_generator(solution, depth=depth)):
             solution.grid.nodes[node]['solved'] = True
             solution.grid.nodes[node]['value'] = value
-        if len(revealed) == 0:
+            revealed_len += 1
+        if revealed_len == 0:
             if depth < max_depth:
                 depth += 1
             else:
@@ -26,11 +26,12 @@ def solve(board, initial, max_depth=1, remainder_cutoff=0):
 
     for i in range(1000):
         remainder_solved = solve_remainder(solution, cutoff=remainder_cutoff)
-        remainder_revealed = board.reveal_nodes(remainder_solved)
-        for node, value in remainder_revealed:
+        revealed_len = 0
+        for node, value in board.reveal_nodes(remainder_solved):
             solution.grid.nodes[node]['solved'] = True
             solution.grid.nodes[node]['value'] = value
-        if len(remainder_revealed) == 0:
+            revealed_len += 1
+        if revealed_len == 0:
             break
 
     return solution
@@ -65,3 +66,9 @@ def update_solution(solution, revealed):
     for node, value in revealed:
         solution.grid.nodes[node]['solved'] = True
         solution.grid.nodes[node]['value'] = value
+
+def update_solutions(solutions: tuple[Solution, ...], revealed):
+    for node, value in revealed:
+        for solution in solutions:
+            solution.grid.nodes[node]['solved'] = True
+            solution.grid.nodes[node]['value'] = value
