@@ -150,6 +150,7 @@ def run_interactive_game_round():
 
     draw_board()
     time.sleep(5)  # long sleep
+    highlighted_pos = None
 
     while not any_player_input():
         draw_board()
