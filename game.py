@@ -154,9 +154,6 @@ def run_automatic_game_round():
 
         is_flag = gs.board.value_at(move) == -1
         gs.do_player_move(move, flag=is_flag)
-        if is_flag:
-            print("flagged", move)
-
 
         gs.state = check_solution(gs.board, gs.player_solution)
         took = time.perf_counter() - _time
