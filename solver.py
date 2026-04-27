@@ -145,15 +145,24 @@ def sat_inspect(solution, depth=1):
 
 def solve_remainder(solution, cutoff=16):
     global_mines_solved = sum(
-        1 for n in solution.grid.nodes if solution.grid.nodes[n]['solved'] and solution.grid.nodes[n]['value'] == -1)
+        1
+        for n in solution.grid.nodes
+        if solution.grid.nodes[n]['solved'] and solution.grid.nodes[n]['value'] == -1)
     global_mines_needed = solution.n_mines - global_mines_solved
 
-    border_nodes = set([n for n in solution.grid.nodes if solution.grid.nodes[n]['solved']
-                        and any(not solution.grid.nodes[m]['solved'] for m in solution.grid.neighbors(n))])
-    unknown_nodes = set([n for n in solution.grid.nodes if not solution.grid.nodes[n]['solved']])
+    border_nodes = {
+        n
+        for n in solution.grid.nodes
+        if solution.grid.nodes[n]['solved'] and any(not solution.grid.nodes[m]['solved'] for m in solution.grid.neighbors(n))
+    }
+    unknown_nodes = {
+        n
+        for n in solution.grid.nodes
+        if not solution.grid.nodes[n]['solved']
+    }
 
     if len(unknown_nodes) <= cutoff:
-        variable_by_node = bidict({})
+        variable_by_node = bidict()
         variable = 1
         for n in unknown_nodes:
             variable_by_node[n] = variable
