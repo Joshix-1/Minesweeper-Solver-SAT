@@ -124,6 +124,7 @@ def run_interactive_game_round():
         dy = 0
 
         for event in pygame.event.get():
+            print(event, event.type == pygame.JOYAXISMOTION, event.type == pygame.JOYBUTTONUP)
             if event.type == pygame.JOYAXISMOTION:
                 if abs(event.value) > 0.5:
                     normed_value = 1 if event.value > 0 else -1
