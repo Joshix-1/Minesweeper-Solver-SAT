@@ -61,17 +61,16 @@ def reveal_node(move: tuple[int, int]):
 
 
 def toggle_flag(pos: tuple[int, int]):
-    if player_solution.grid.nodes[pos]['flagged']:
+    node = player_solution.grid.nodes[pos]
+    if node['flagged']:
         remove_flag(pos)
-    else:
+    elif not node['solved']:
         add_flag(pos)
 
 
 def remove_flag(pos: tuple[int, int]):
     for s in (player_solution, solver_solution):
         node = s.grid.nodes[pos]
-        if not node['flagged']:
-            return
         node['value'] = 0
         node['solved'] = False
         node['flagged'] = False
@@ -80,8 +79,6 @@ def remove_flag(pos: tuple[int, int]):
 def add_flag(pos: tuple[int, int]):
     for s in (player_solution, solver_solution):
         node = s.grid.nodes[pos]
-        if node['solved']:
-            return
         node['value'] = -1
         node['solved'] = True
         node['flagged'] = True
