@@ -3,6 +3,7 @@ import os
 import random
 import sys
 import time
+import pygame
 import pygame.joystick
 
 from solver import sat_inspect_generator, Solution
@@ -10,7 +11,7 @@ from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
 
-pygame.joystick.init()
+pygame.init()
 
 if False:
     boards = set()
