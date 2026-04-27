@@ -10,7 +10,7 @@ from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
 
-pygame.init()
+pygame.joystick.init()
 
 if False:
     boards = set()
