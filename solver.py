@@ -93,14 +93,14 @@ def sat_inspect_cell(solution, source, depth=1):
         mines_total = solution.grid.nodes[n]['value']
         mines_needed = mines_total - len(adj_mine)
 
-        left_combinations = set(it.combinations(variables, len(adj_unknown) + 1 - mines_needed))
-        right_combinations = set(it.combinations(variables, 1 + mines_needed))
+        left_combinations = it.combinations(variables, len(adj_unknown) + 1 - mines_needed)
+        right_combinations = it.combinations(variables, 1 + mines_needed)
 
 
         for lc in left_combinations:
             cnf.append(lc)
         for rc in right_combinations:
-            cnf.append([-1 * rc[i] for i in range(len(rc))])
+            cnf.append([-1 * x for x in rc])
 
     # exhaust solutions to CNF expression with pysat
     solutions = []
@@ -109,7 +109,7 @@ def sat_inspect_cell(solution, source, depth=1):
             has_solution = solver.solve()
             model = solver.get_model()
         if has_solution:
-            cnf.append([-1 * model[i] for i in range(len(model))])
+            cnf.append([-1 * x for x in model])
             solutions.append(model)
         else:
             break
@@ -117,11 +117,10 @@ def sat_inspect_cell(solution, source, depth=1):
     # find all variables which have only one value over all solutions to CNF
     discovered_variables = []
     if solutions:
-        for j in range(len(solutions[0])):
+        for j, first in enumerate(solutions[0]):
             certain = True
-            first = solutions[0][j]
-            for i in range(len(solutions)):
-                if not solutions[i][j] == first:
+            for s in solutions:
+                if not s[j] == first:
                     certain = False
                     break
             if certain:
