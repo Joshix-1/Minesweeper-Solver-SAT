@@ -54,15 +54,18 @@ class Solution:
 def sat_inspect_cell(solution, source, depth=1):
     # if node has not been solved, it has no information
     if not solution.grid.nodes[source]['solved']:
-        return []
+        return
 
     # determine all nodes in the border and their adjacent unsolved nodes
     dfs_tree = nx.dfs_tree(solution.grid, source, depth_limit=depth)
-    border_nodes = set([n for n in dfs_tree.nodes if solution.grid.nodes[n]['solved']
-                        and any(not solution.grid.nodes[m]['solved'] for m in solution.grid.neighbors(n))])
+    border_nodes = {
+        n
+        for n in dfs_tree.nodes
+        if solution.grid.nodes[n]['solved'] and any(not solution.grid.nodes[m]['solved'] for m in solution.grid.neighbors(n))
+    }
     if len(border_nodes) == 0:
-        return []
-    unknown_nodes = set([])
+        return
+    unknown_nodes = set()
     for n in border_nodes:
         for m in solution.grid.neighbors(n):
             if not solution.grid.nodes[m]['solved']:
@@ -125,13 +128,11 @@ def sat_inspect_cell(solution, source, depth=1):
                 discovered_variables.append(first)
 
     # return newly solved nodes
-    solved_nodes = []
     for v in discovered_variables:
         node = variable_by_node.inv[abs(v)]
-        solved_nodes.append(node)
+        yield node
         if v > 0:
             solution.grid.nodes[node]['flagged'] = True
-    return solved_nodes
 
 
 def sat_inspect_generator(solution, depth=1):
