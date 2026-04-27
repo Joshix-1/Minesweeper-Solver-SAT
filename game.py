@@ -9,7 +9,7 @@ from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
 
-os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = True
+os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
 import pygame, pygame.event, pygame.joystick
 pygame.joystick.init()
 
