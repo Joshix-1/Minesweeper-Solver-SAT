@@ -130,22 +130,22 @@ def run_interactive_game_round():
                 is_automatic_game = True
                 return
         if useJoystick:
-            axes = joystick.get_numaxes()
-            if axes[0] > 0.1:
+            axis_0 = joystick.get_axis(0)
+            if axis_0 > 0.1:
                 move = (move[0] + 1, move[1])
-            elif axes[0] < -0.1:
+            elif axis_0 < -0.1:
                 move = (move[0] - 1, move[1])
-            if axes[1] > 0.1:
+            axis_1 = joystick.get_axis(1)
+            if axes_1 > 0.1:
                 move = (move[0], move[1] + 1)
-            elif axes[1] < -0.1:
+            elif axes_1 < -0.1:
                 move = (move[0], move[1] - 1)
 
-            buttons = joystick.get_numbuttons()
-            if buttons[1] == 1: # keine Bombe
+            if joystick.get_button(1) == 1: # keine Bombe
                 gs.reveal_node(move)
-            if buttons[0] == 1: # flagge tooglen
+            if joystick.get_button(0) == 1: # flagge tooglen
                 gs.toggle_flag(move)
-            if buttons[8] == 1 or buttons[9] == 1: #cancel Game
+            if joystick.get_button(8) == 1 or joystick.get_button(9) == 1: # cancel Game
                 is_automatic_game = True
                 return
 
