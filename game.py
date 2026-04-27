@@ -92,8 +92,8 @@ def draw_board():
             elif node['solved']:
                 if node['value'] == -1:
                     draw_4x4_mine(x, y, drawpx=draw_pixel)
-                elif offscreen_canvas is not None:
-                    offscreen_canvas.DrawNumber(x, y, node['value'])
+                # elif offscreen_canvas is not None:
+                #    offscreen_canvas.DrawNumber(x, y, node['value'])
                 else:
                     draw_4x4_number(x, y, node['value'], drawpx=draw_pixel)
             else:
