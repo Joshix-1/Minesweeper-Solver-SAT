@@ -136,7 +136,6 @@ def run_interactive_game_round():
                 (highlighted_pos[1] + dy) % gs.n_rows,
             )
 
-        if joystick is not None:
             if joystick.get_button(1) == 1: # keine Bombe
                 gs.reveal_node(highlighted_pos)
             if joystick.get_button(0) == 1: # flagge tooglen
