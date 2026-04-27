@@ -48,18 +48,17 @@ def draw_4x4_mine(x: int, y: int, drawpx: DrawPixelFn) -> None:
             drawpx((x, y), (255, 0, 0))
 
 
-EMPTY_SET: frozenset[tuple[int, int]] = frozenset()
 # SEE: https://deathsythe.itch.io/smallpxnumbers
-NUMBER_COLOURED_PIXELS: dict[int, frozenset[tuple[int, int]]] = {
-    0: EMPTY_SET,
-    1: frozenset((
+NUMBER_COLOURED_PIXELS: dict[int, tuple[tuple[int, int], ...]] = {
+    0: (),
+    1: (
         (1, 0),
         (2, 0),
         (2, 1),
         (2, 2),
         (2, 3),
-    )),
-    2: frozenset((
+    ),
+    2: (
         (1, 0),
         (2, 0),
         (3, 0),
@@ -68,8 +67,8 @@ NUMBER_COLOURED_PIXELS: dict[int, frozenset[tuple[int, int]]] = {
         (1, 3),
         (2, 3),
         (3, 3),
-    )),
-    3: frozenset((
+    ),
+    3: (
         (1, 0),
         (2, 0),
         (3, 1),
@@ -78,8 +77,8 @@ NUMBER_COLOURED_PIXELS: dict[int, frozenset[tuple[int, int]]] = {
         (1, 3),
         (2, 2),
         (2, 3),
-    )),
-    4: frozenset((
+    ),
+    4: (
         (0, 0),
         (2, 0),
         (0, 1),
@@ -89,8 +88,8 @@ NUMBER_COLOURED_PIXELS: dict[int, frozenset[tuple[int, int]]] = {
         (2, 2),
         (3, 2),
         (2, 3),
-    )),
-    5: frozenset((
+    ),
+    5: (
         (1, 0),
         (2, 0),
         (3, 0),
@@ -99,8 +98,8 @@ NUMBER_COLOURED_PIXELS: dict[int, frozenset[tuple[int, int]]] = {
         (1, 3),
         (2, 3),
         (3, 3),
-    )),
-    6: frozenset((
+    ),
+    6: (
         (3, 0),
         (2, 0),
         (1, 1),
@@ -109,16 +108,16 @@ NUMBER_COLOURED_PIXELS: dict[int, frozenset[tuple[int, int]]] = {
         (1, 3),
         (2, 3),
         (3, 3),
-    )),
-    7: frozenset((
+    ),
+    7: (
         (1, 0),
         (2, 0),
         (3, 0),
         (3, 1),
         (2, 2),
         (1, 3),
-    )),
-    8: frozenset((
+    ),
+    8: (
         (0, 0),
         (1, 0),
         (2, 0),
@@ -130,8 +129,8 @@ NUMBER_COLOURED_PIXELS: dict[int, frozenset[tuple[int, int]]] = {
         (1, 3),
         (2, 3),
         (3, 3),
-    )),
-    9: frozenset((
+    ),
+    9: (
         (1, 0),
         (2, 0),
         (3, 0),
@@ -139,13 +138,12 @@ NUMBER_COLOURED_PIXELS: dict[int, frozenset[tuple[int, int]]] = {
         (3, 1),
         (3, 2),
         (2, 3),
-    )),
+    ),
 }
 
 def draw_4x4_number(x: int, y: int, number: int, drawpx: DrawPixelFn) -> None:
     if number == 0:
         return
-    bg_colour = (0, 0, 0)
     colour = WHITE
 
     if number == 1:
@@ -167,11 +165,10 @@ def draw_4x4_number(x: int, y: int, number: int, drawpx: DrawPixelFn) -> None:
     elif number == 9:
         colour = (239, 219, 35) # yellow
 
-    coloured = NUMBER_COLOURED_PIXELS.get(number, EMPTY_SET)
+    coloured = NUMBER_COLOURED_PIXELS.get(number, ())
 
-    for dx in range(4):
-        for dy in range(4):
-            drawpx(
-                (x + dx, y + dy),
-                colour if (dx, dy) in coloured else bg_colour,
-            )
+    for (dx, dy) in coloured:
+        drawpx(
+            (x + dx, y + dy),
+            colour,
+        )
