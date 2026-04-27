@@ -8,11 +8,11 @@ from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
 
-if False:
+if True:
     boards = set()
     for i in range(1000):
-        initial = random.randrange(16), random.randrange(16)
-        boards.add(frozenset(generate_fair_board(16, 16, 42, initial, max_depth=1, remainder_cutoff=16, max_attempts=1000).get_mines()))
+        initial = random.randrange(13), random.randrange(13)
+        boards.add(frozenset(gs.generate_fair_board(13, 13, 30 + random.randrange(6), initial, max_depth=100, remainder_cutoff=16, max_attempts=1000).get_mines()))
     print(boards)
 
 def get_move() -> tuple[int, int]:
@@ -30,8 +30,8 @@ def get_move() -> tuple[int, int]:
 
 
 def init_game_state():
-    gs.n_rows = 16
-    gs.n_cols = 16
+    gs.n_rows = 13
+    gs.n_cols = 13
     gs.n_mines = gs.n_rows * gs.n_cols // 6
     gs.new_state()
 
@@ -41,27 +41,31 @@ if USE_RGB_MATRIX:
     offscreen_canvas = matrix.CreateFrameCanvas()
 else:
     matrix = None
+    offscreen_canvas = None
 
 highlighted_pos: None | tuple[int, int] = None
 
 
-def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
-    x, y = pos
-    offscreen_canvas.SetPixel(x, y, *colour)
+if offscreen_canvas is not None:
+    def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
+        x, y = pos
+        offscreen_canvas.SetPixel(x, y, *colour)
+else:
+    def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
+        print(f"draw_pixel({pos}, {colour})")
+
 
 def draw_board():
-    if matrix is None:
-        print(gs.player_solution)
-        return
     global offscreen_canvas
 
-    offscreen_canvas.Fill(0, 0, 0)
+    if offscreen_canvas is not None:
+        offscreen_canvas.Fill(0, 0, 0)
 
     self = gs.player_solution
     for i in range(self.n_rows):
-        x = i * 4
+        x = i * 5
         for j in range(self.n_cols):
-            y = j * 4
+            y = j * 5
             node = self.grid.nodes[i, j]
             if node['flagged']:
                 draw_4x4_flag(x, y, drawpx=draw_pixel)
@@ -80,14 +84,15 @@ def draw_board():
 
     if highlighted_pos:
         (x, y) = highlighted_pos
-        x *= 4
-        y *= 4
+        x *= 5
+        y *= 5
         draw_pixel((x, y), WHITE)
         draw_pixel((x + 3, y), WHITE)
         draw_pixel((x, y + 3), WHITE)
         draw_pixel((x + 3, y + 3), WHITE)
 
-    offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+    if matrix is not None:
+        offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
 
 
 def run_interactive_game_round():

@@ -3,8 +3,8 @@ import json
 from solver_implementation import *
 from random_fair_boards import get_fair_mines
 
-n_rows: int = 16
-n_cols: int = 16
+n_rows: int = 13
+n_cols: int = 13
 n_mines: int = 42
 
 board: Board = Board(n_rows, n_cols)
@@ -31,7 +31,7 @@ def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = Fal
         start_time = time.time()
         return
 
-    if n_rows == 16 and n_cols == 16:
+    if n_rows == 13 and n_cols == 13:
         mines = get_fair_mines(initial)
         board = Board(n_rows, n_cols, n_mines=len(mines), mines=mines)
     else:
