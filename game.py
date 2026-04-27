@@ -136,9 +136,9 @@ def run_interactive_game_round():
             elif axis_0 < -0.1:
                 move = (move[0] - 1, move[1])
             axis_1 = joystick.get_axis(1)
-            if axes_1 > 0.1:
+            if axis_1 > 0.1:
                 move = (move[0], move[1] + 1)
-            elif axes_1 < -0.1:
+            elif axis_1 < -0.1:
                 move = (move[0], move[1] - 1)
 
             if joystick.get_button(1) == 1: # keine Bombe
