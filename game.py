@@ -121,28 +121,46 @@ def run_interactive_game_round():
 
     while gs.state == 0:
         draw_board()
-        move = highlighted_pos
+        dx = 0
+        dy = 0
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            if event.type == pygame.QUIT:
                 is_automatic_game = True
                 return
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    is_automatic_game = True
+                    return
+                if event.key == pygame.K_LEFT:
+                    dx -= 1
+                if event.key == pygame.K_RIGHT:
+                    dx += 1
+                if event.key == pygame.K_DOWN:
+                    dy -= 1
+                if event.key == pygame.K_UP:
+                    dy += 1
+
         if joystick is not None:
-            if abs(axis_0    := joystick.get_axis(0)) > 0.1:
-                move = ((move[0] + (1 if axis_0 > 0 else -1)) % gs.board.n_cols, move[1])
+            if abs(axis_0 := joystick.get_axis(0)) > 0.1:
+                dx += 1 if axis_0 > 0 else -1
 
             if abs(axis_1 := joystick.get_axis(1)) > 0.1:
-                move = (move[0], (move[1] + (1 if axis_1 > 0 else -1)) % gs.board.n_rows)
+                dy += 1 if axis_1 > 0 else -1
 
+        highlighted_pos = (
+            (highlighted_pos[0] + dx) % gs.n_cols,
+            (highlighted_pos[1] + dy) % gs.n_rows,
+        )
+
+        if joystick is not None:
             if joystick.get_button(1) == 1: # keine Bombe
-                gs.reveal_node(move)
+                gs.reveal_node(highlighted_pos)
             if joystick.get_button(0) == 1: # flagge tooglen
-                gs.toggle_flag(move)
+                gs.toggle_flag(highlighted_pos)
             if joystick.get_button(8) == 1 or joystick.get_button(9) == 1: # cancel Game
                 is_automatic_game = True
                 return
-
-        highlighted_pos = move
 
         gs.state = check_solution(gs.board, gs.player_solution)
         time.sleep(1e-6)  # small sleep
