@@ -3,11 +3,14 @@ import os
 import random
 import sys
 import time
+import pygame
 
 from solver import sat_inspect_generator, Solution
 from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
+
+pygame.init()
 
 if False:
     boards = set()
@@ -17,19 +20,6 @@ if False:
         boards.add(frozenset(gs.generate_fair_board(13, 13, 30 + random.randrange(6), initial, max_depth=1, remainder_cutoff=16, max_attempts=1000).get_mines()))
     print(boards)
     sys.exit(0)
-
-def get_move() -> tuple[int, int]:
-    while True:
-        try:
-            move = input("Move [x,y]: ")
-            x, y = move.split(",")
-            x = int(x.strip())
-            y = int(y.strip())
-            return y, x
-        except EOFError:
-            raise
-        except Exception as err:
-            print(f"{err.__class__.__name__}: {err}", flush=True)
 
 
 def init_game_state():
@@ -120,16 +110,46 @@ def draw_board():
 
 def run_interactive_game_round():
     global highlighted_pos
+    highlighted_pos = (0, 0)
+    global is_automatic_game
+    useJoystick = False
+    joystick = None
+    if pygame.joystick.get_count() > 0:
+        useJoystick = True
+        joystick = pygame.joystick.Joystick(0)
+
     init_game_state()
+
 
     while gs.state == 0:
         draw_board()
+        move = highlighted_pos
 
-        move = get_move()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                is_automatic_game = True
+                return
+        if useJoystick:
+            axes = joystick.get_numaxes()
+            if axes[0] > 0.1:
+                move = (move[0] + 1, move[1])
+            elif axes[0] < -0.1:
+                move = (move[0] - 1, move[1])
+            if axes[1] > 0.1:
+                move = (move[0], move[1] + 1)
+            elif axes[1] < -0.1:
+                move = (move[0], move[1] - 1)
+
+            buttons = joystick.get_numbuttons()
+            if buttons[1] == 1: # keine Bombe
+                gs.reveal_node(move)
+            if buttons[0] == 1: # flagge tooglen
+                gs.toggle_flag(move)
+            if buttons[8] == 1 or buttons[9] == 1: #cancel Game
+                is_automatic_game = True
+                return
 
         highlighted_pos = move
-
-        gs.do_player_move(move)
 
         gs.state = check_solution(gs.board, gs.player_solution)
         time.sleep(1e-6)  # small sleep
@@ -146,11 +166,16 @@ def run_interactive_game_round():
 
 def run_automatic_game_round():
     global highlighted_pos
+    highlighted_pos = None
+    global is_automatic_game
     init_game_state()
 
     _time = time.perf_counter()
 
     while gs.state == 0:
+        if any_player_input:
+            is_automatic_game = False
+            return
         draw_board()
         print(f"draw_board took {time.perf_counter() - _time}s")
 
@@ -163,7 +188,10 @@ def run_automatic_game_round():
         highlighted_pos = move
 
         is_flag = gs.board.value_at(move) == -1
-        gs.do_player_move(move, flag=is_flag)
+        if is_flag:
+            gs.add_flag(move)
+        else:
+            gs.reveal_node(move)
 
         gs.state = check_solution(gs.board, gs.player_solution)
         took = time.perf_counter() - _time
@@ -181,8 +209,21 @@ def run_automatic_game_round():
 
     time.sleep(10)  # small sleep
 
+def any_player_input():
+    if pygame.joystick.get_count() > 0:
+        joystick = pygame.joystick.Joystick(0)
+        axes = joystick.get_numaxes()
+        buttons = joystick.get_numbuttons()
+        anyButtonPressed = lambda: any(buttons[i] == 1 for i in range(len(buttons)))
+        anyAxisMoved = lambda: any(abs(axes[i]) > 0.1 for i in range(len(axes)))
+        return anyButtonPressed() or anyAxisMoved()
+    return False
+
+is_automatic_game = False
 
 if __name__ == "__main__":
     while True:
-        run_automatic_game_round()
-        # run_interactive_game_round()
+        if is_automatic_game:
+            run_automatic_game_round()
+        else:
+            run_interactive_game_round()
