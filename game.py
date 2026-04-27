@@ -173,7 +173,7 @@ def run_automatic_game_round():
     _time = time.perf_counter()
 
     while gs.state == 0:
-        if any_player_input:
+        if any_player_input():
             is_automatic_game = False
             return
         draw_board()
@@ -212,10 +212,8 @@ def run_automatic_game_round():
 def any_player_input():
     if pygame.joystick.get_count() > 0:
         joystick = pygame.joystick.Joystick(0)
-        axes = joystick.get_numaxes()
-        buttons = joystick.get_numbuttons()
-        anyButtonPressed = lambda: any(buttons[i] == 1 for i in range(len(buttons)))
-        anyAxisMoved = lambda: any(abs(axes[i]) > 0.1 for i in range(len(axes)))
+        anyButtonPressed = lambda: any(joystick.get_button[i] == 1 for i in range(joystick.get_numbuttons()))
+        anyAxisMoved = lambda: any(abs(joystick.get_axis[i]) > 0.1 for i in range(joystick.get_numaxes()))
         return anyButtonPressed() or anyAxisMoved()
     return False
 
