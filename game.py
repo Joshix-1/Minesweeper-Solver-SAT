@@ -13,6 +13,9 @@ os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
 import pygame, pygame.event, pygame.joystick
 pygame.init()
 
+for i in range(pygame.joystick.get_count()):
+    pygame.joystick.Joystick(i).init()
+
 if False:
     boards = set()
     for i in range(2028):
