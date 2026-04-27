@@ -132,11 +132,14 @@ def run_interactive_game_round():
             if abs(axis_1 := joystick.get_axis(1)) > 0.15:
                 dy += 1 if axis_1 > 0 else -1
 
+        if dx or dy:
             highlighted_pos = (
                 (highlighted_pos[0] + dx) % gs.n_cols,
                 (highlighted_pos[1] + dy) % gs.n_rows,
             )
 
+        for j in range(pygame.joystick.get_count()):
+            joystick = pygame.joystick.Joystick(j)
             if joystick.get_button(1) == 1: # keine Bombe
                 gs.reveal_node(highlighted_pos)
             if joystick.get_button(0) == 1: # flagge tooglen
