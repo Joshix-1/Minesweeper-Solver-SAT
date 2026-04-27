@@ -50,25 +50,38 @@ def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = Fal
     start_time = time.time()
 
 
-def do_player_move(move: tuple[int, int], flag=False):
+def reveal_node(move: tuple[int, int]):
     global board
     global player_solution
 
     if not board.has_reveal():
         new_state(move)
-    elif flag:
-        for s in (player_solution, solver_solution):
-            node = s.grid.nodes[move]
-            node['value'] = -1
-            node['solved'] = True
-            node['flagged'] = True
     else:
         update_solutions((player_solution, solver_solution), board.reveal_node(move))
+
+
+def toggle_flag(pos: tuple[int, int]):
+    if player_solution.grid.nodes[pos]['flagged']:
+        remove_flag(pos)
+    else:
+        add_flag(pos)
 
 
 def remove_flag(pos: tuple[int, int]):
     for s in (player_solution, solver_solution):
         node = s.grid.nodes[pos]
+        if not node['flagged']:
+            return
         node['value'] = 0
         node['solved'] = False
         node['flagged'] = False
+
+
+def add_flag(pos: tuple[int, int]):
+    for s in (player_solution, solver_solution):
+        node = s.grid.nodes[pos]
+        if node['solved']:
+            return
+        node['value'] = -1
+        node['solved'] = True
+        node['flagged'] = True
