@@ -9,12 +9,13 @@ from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
 
-if True:
+if False:
     boards = set()
     for i in range(1000):
         initial = random.randrange(13), random.randrange(13)
-        boards.add(frozenset(gs.generate_fair_board(13, 13, 30 + random.randrange(6), initial, max_depth=100, remainder_cutoff=16, max_attempts=1000).get_mines()))
+        boards.add(frozenset(gs.generate_fair_board(13, 13, 30 + random.randrange(6), initial, max_depth=1, remainder_cutoff=16, max_attempts=1000).get_mines()))
     print(boards)
+    sys.exit(0)
 
 def get_move() -> tuple[int, int]:
     while True:
