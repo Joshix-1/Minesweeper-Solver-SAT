@@ -145,7 +145,7 @@ def run_interactive_game_round():
                 return
 
         gs.state = check_solution(gs.board, gs.player_solution)
-        time.sleep(1e-6)  # small sleep
+        time.sleep(1e-5)  # small sleep
 
     draw_board()
     time.sleep(5)  # long sleep
