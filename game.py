@@ -25,7 +25,7 @@ def get_move() -> tuple[int, int]:
             x = int(x.strip())
             y = int(y.strip())
             return y, x
-        except BrokenPipeError:
+        except EOFError:
             raise
         except Exception as err:
             print(f"{err.__class__.__name__}: {err}", flush=True)
