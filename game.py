@@ -157,10 +157,9 @@ def run_automatic_game_round():
 
         gs.state = check_solution(gs.board, gs.player_solution)
         took = time.perf_counter() - _time
+        print(f"took {took}s")
         if took < 1:
             time.sleep(1 - took)
-        else:
-            print(f"took {took}s")
         _time = time.perf_counter()
 
 
