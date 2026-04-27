@@ -97,7 +97,7 @@ def draw_board():
                 else:
                     draw_4x4_number(x, y, node['value'], drawpx=draw_pixel)
             else:
-                draw_rect((x, y), (4, 4), (160, 160, 160))
+                draw_rect((x, y), (4, 4), (22, 22, 22))
 
     if highlighted_pos:
         (x, y) = highlighted_pos
