@@ -130,16 +130,11 @@ def run_interactive_game_round():
                 is_automatic_game = True
                 return
         if useJoystick:
-            axis_0 = joystick.get_axis(0)
-            if axis_0 > 0.1:
-                move = (move[0] + 1, move[1])
-            elif axis_0 < -0.1:
-                move = (move[0] - 1, move[1])
-            axis_1 = joystick.get_axis(1)
-            if axis_1 > 0.1:
-                move = (move[0], move[1] + 1)
-            elif axis_1 < -0.1:
-                move = (move[0], move[1] - 1)
+            if abs(axis_0    := joystick.get_axis(0)) > 0.1:
+                move = ((move[0] + (1 if axis_0 > 0 else -1)) % gs.board.n_cols, move[1])
+
+            if abs(axis_1 := joystick.get_axis(1)) > 0.1:
+                move = (move[0], (move[1] + (1 if axis_1 > 0 else -1)) % gs.board.n_rows)
 
             if joystick.get_button(1) == 1: # keine Bombe
                 gs.reveal_node(move)
