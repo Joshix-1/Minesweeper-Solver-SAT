@@ -147,6 +147,10 @@ def run_interactive_game_round():
         gs.state = check_solution(gs.board, gs.player_solution)
         time.sleep(1e-5)  # small sleep
 
+    for j in range(pygame.joystick.get_count()):
+        joystick = pygame.joystick.Joystick(j)
+        joystick.rumble(100, 400, 1)
+
     draw_board()
     time.sleep(5)  # long sleep
     highlighted_pos = None
