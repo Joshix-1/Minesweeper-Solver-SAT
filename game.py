@@ -210,7 +210,7 @@ def any_player_input():
         return anyButtonPressed() or anyAxisMoved()
     return False
 
-is_automatic_game = False
+is_automatic_game = True
 
 if __name__ == "__main__":
     while True:
