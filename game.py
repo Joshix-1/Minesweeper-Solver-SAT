@@ -53,6 +53,9 @@ if offscreen_canvas is not None:
     def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
         x, y = pos
         offscreen_canvas.SetPixel(x, y, *colour)
+
+    def draw_rect(pos: tuple[int, int], size: tuple[int, int], colour: tuple[int, int, int]) -> None:
+        offscreen_canvas.SubFill(*pos, *size, *colour)
 else:
     from PIL import Image
     image = Image.new("RGB", size=(64, 64))
@@ -60,12 +63,19 @@ else:
         # print(f"draw_pixel({pos}, {colour})")
         image.putpixel(pos, colour)
 
+    def draw_rect(pos: tuple[int, int], size: tuple[int, int], colour: tuple[int, int, int]) -> None:
+        (x, y) = pos
+        (w, h) = size
+        for dx in range(w):
+            for dy in range(h):
+                draw_pixel((x + dx, y + dy), colour)
+
 
 def draw_board():
     global offscreen_canvas
 
     if offscreen_canvas is not None:
-        offscreen_canvas.Fill(0, 0, 0)
+        offscreen_canvas.Clear()
     else:
         for x in range(64):
             for y in range(64):
@@ -85,11 +95,7 @@ def draw_board():
                 else:
                     draw_4x4_number(x, y, node['value'], drawpx=draw_pixel)
             else:
-                # draw empty
-                for dx in range(4):
-                    for dy in range(4):
-                        draw_pixel((x + dx, y + dy), (22, 22, 22))
-
+                draw_rect((x, y), (4, 4), (22, 22, 22))
 
     if highlighted_pos:
         (x, y) = highlighted_pos
@@ -144,6 +150,7 @@ def run_automatic_game_round():
 
     while gs.state == 0:
         draw_board()
+        print(f"draw_board took {time.perf_counter() - _time}s")
 
         try:
             move = next(sat_inspect_generator(gs.solver_solution))

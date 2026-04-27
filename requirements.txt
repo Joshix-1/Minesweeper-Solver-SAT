@@ -1,5 +1,5 @@
 bidict==0.23.1
 networkx==3.6.1
 python-sat==1.9.dev2
-rgbmatrix @ git+https://github.com/Joshix-1/rpi-rgb-led-matrix@c7589b6493da7240b739b37bb6a098b0c772f878
+rgbmatrix @ git+https://github.com/Joshix-1/rpi-rgb-led-matrix@4be0931c7a9494f9e8ce5661646317c5c45e1492
 six==1.17.0
