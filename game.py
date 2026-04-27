@@ -205,8 +205,8 @@ def run_automatic_game_round():
 def any_player_input():
     if pygame.joystick.get_count() > 0:
         joystick = pygame.joystick.Joystick(0)
-        anyButtonPressed = lambda: any(joystick.get_button[i] == 1 for i in range(joystick.get_numbuttons()))
-        anyAxisMoved = lambda: any(abs(joystick.get_axis[i]) > 0.1 for i in range(joystick.get_numaxes()))
+        anyButtonPressed = lambda: any(joystick.get_button(i) == 1 for i in range(joystick.get_numbuttons()))
+        anyAxisMoved = lambda: any(abs(joystick.get_axis(i)) > 0.1 for i in range(joystick.get_numaxes()))
         return anyButtonPressed() or anyAxisMoved()
     return False
 
