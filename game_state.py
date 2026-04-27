@@ -57,11 +57,18 @@ def do_player_move(move: tuple[int, int], flag=False):
     if not board.has_reveal():
         new_state(move)
     elif flag:
-        player_solution.grid.nodes[move]['value'] = -1
-        player_solution.grid.nodes[move]['solved'] = True
-        player_solution.grid.nodes[move]['flagged'] = True
-        solver_solution.grid.nodes[move]['value'] = -1
-        solver_solution.grid.nodes[move]['solved'] = True
-        solver_solution.grid.nodes[move]['flagged'] = True
+        for s in (player_solution, solver_solution):
+            node = s.grid.nodes[move]
+            node['value'] = -1
+            node['solved'] = True
+            node['flagged'] = True
     else:
         update_solutions((player_solution, solver_solution), board.reveal_node(move))
+
+
+def remove_flag(pos: tuple[int, int]):
+    for s in (player_solution, solver_solution):
+        node = s.grid.nodes[pos]
+        node['value'] = 0
+        node['solved'] = False
+        node['flagged'] = False
