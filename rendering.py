@@ -22,9 +22,9 @@ def create_rgbmatrix() -> RGBMatrix:
     # options.pixel_mapper_config = self.args.led_pixel_mapper
     # options.panel_type = self.args.led_panel_type
     # options.pwm_dither_bits = self.args.led_pwm_dither_bits
-    options.limit_refresh_rate_hz = 0  # no limit
+    options.limit_refresh_rate_hz = 10  # no limit
 
-    options.show_refresh_rate = 1
+    options.show_refresh_rate = 0
 
     # options.gpio_slowdown = self.args.led_slowdown_gpio
     options.disable_hardware_pulsing = True
