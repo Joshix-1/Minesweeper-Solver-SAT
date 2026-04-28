@@ -17,7 +17,7 @@ def create_rgbmatrix() -> RGBMatrix:
     # options.multiplexing = self.args.led_multiplexing
     # options.pwm_bits = self.args.led_pwm_bits
     # options.brightness = self.args.led_brightness
-    options.pwm_lsb_nanoseconds = 400
+    #options.pwm_lsb_nanoseconds = 400
     # options.led_rgb_sequence = self.args.led_rgb_sequence
     # options.pixel_mapper_config = self.args.led_pixel_mapper
     # options.panel_type = self.args.led_panel_type
