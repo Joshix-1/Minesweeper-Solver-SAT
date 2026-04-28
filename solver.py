@@ -58,21 +58,21 @@ def sat_inspect_cell(solution, source, depth=1):
 
     # determine all nodes in the border and their adjacent unsolved nodes
     dfs_tree = nx.dfs_tree(solution.grid, source, depth_limit=depth)
+    unknown_nodes = set()
     border_nodes = {
         n
         for n in dfs_tree.nodes
-        if solution.grid.nodes[n]['solved'] and any(not solution.grid.nodes[m]['solved'] for m in solution.grid.neighbors(n))
+        if solution.grid.nodes[n]['solved'] and sum(
+            1
+            for m in solution.grid.neighbors(n)
+            if not solution.grid.nodes[m]['solved'] and (unknown_nodes.add(m) or True)
+        )
     }
     if len(border_nodes) == 0:
         return
-    unknown_nodes = set()
-    for n in border_nodes:
-        for m in solution.grid.neighbors(n):
-            if not solution.grid.nodes[m]['solved']:
-                unknown_nodes.add(m)
 
     # map all unknown nodes to boolean variable indices
-    variable_by_node = bidict({})
+    variable_by_node = bidict()
     variable = 1
     for n in unknown_nodes:
         variable_by_node[n] = variable
@@ -81,19 +81,20 @@ def sat_inspect_cell(solution, source, depth=1):
     # using values of border nodes, construct CNF expression
     cnf = CNF()
     for n in border_nodes:
-        if solution.grid.nodes[n]['value'] == -1:
+        node = solution.grid.nodes[n]
+        if node['value'] == -1:
             continue
 
         adj = list(solution.grid.neighbors(n))
-        adj_unknown = [m for m in adj if not solution.grid.nodes[m]['solved']]
-        adj_mine = [m for m in adj if solution.grid.nodes[m]['solved'] and solution.grid.nodes[m]['value'] == -1]
+        adj_unknown = (m for m in adj if not solution.grid.nodes[m]['solved'])
+        adj_mine = (m for m in adj if solution.grid.nodes[m]['solved'] and solution.grid.nodes[m]['value'] == -1)
 
         variables = [variable_by_node[m] for m in adj_unknown]
 
-        mines_total = solution.grid.nodes[n]['value']
-        mines_needed = mines_total - len(adj_mine)
+        mines_total = node['value']
+        mines_needed = mines_total - sum(1 for _ in adj_mine)
 
-        left_combinations = it.combinations(variables, len(adj_unknown) + 1 - mines_needed)
+        left_combinations = it.combinations(variables, len(variables) + 1 - mines_needed)
         right_combinations = it.combinations(variables, 1 + mines_needed)
 
 
@@ -115,7 +116,6 @@ def sat_inspect_cell(solution, source, depth=1):
             break
 
     # find all variables which have only one value over all solutions to CNF
-    discovered_variables = []
     if solutions:
         for j, first in enumerate(solutions[0]):
             certain = True
@@ -124,22 +124,16 @@ def sat_inspect_cell(solution, source, depth=1):
                     certain = False
                     break
             if certain:
-                discovered_variables.append(first)
-
-    # return newly solved nodes
-    for v in discovered_variables:
-        node = variable_by_node.inv[abs(v)]
-        yield node
-        if v > 0:
-            solution.grid.nodes[node]['flagged'] = True
+                v = first
+                node = variable_by_node.inv[abs(v)]
+                yield node
+                if v > 0:
+                    solution.grid.nodes[node]['flagged'] = True
 
 
 def sat_inspect_generator(solution, depth=1):
     for n in solution.grid.nodes:
         yield from sat_inspect_cell(solution, n, depth=depth)
-
-def sat_inspect(solution, depth=1):
-    return list(sat_inspect_generator(solution, depth))
 
 
 def solve_remainder(solution, cutoff=16):
