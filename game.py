@@ -9,9 +9,17 @@ from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
 
+#SEE: https://github.com/pygame/pygame/blob/main/examples/headless_no_windows_needed.py
+
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
-import pygame, pygame.event, pygame.joystick
-pygame.init()
+# set SDL to use the dummy NULL video driver,
+#   so it doesn't need a windowing system.
+os.environ["SDL_VIDEODRIVER"] = "dummy"
+
+import pygame, pygame.display, pygame.event, pygame.joystick
+pygame.display.init()
+pygame.joystick.init()
+_screen = pygame.display.set_mode((1, 1))
 
 for i in range(pygame.joystick.get_count()):
     pygame.joystick.Joystick(i).init()
