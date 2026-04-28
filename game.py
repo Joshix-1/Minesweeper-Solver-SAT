@@ -195,7 +195,14 @@ def run_automatic_game_round():
             move = next(sat_inspect_generator(gs.solver_solution))
         except StopIteration:
             print("sat_inspect did not find move")
-            move = (random.randrange(gs.board.n_cols), random.randrange(gs.board.n_rows))
+            nodes = gs.solver_solution.grid.nodes
+            unsolved_nodes = [
+                n for n in nodes if not nodes[n]['solved']
+            ]
+            if unsolved_nodes:
+                move = random.choice(unsolved_nodes)
+            else:
+                move = (random.randrange(gs.board.n_cols), random.randrange(gs.board.n_rows))
 
         highlighted_pos = move
 
