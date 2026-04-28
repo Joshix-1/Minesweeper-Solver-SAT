@@ -158,6 +158,7 @@ def run_interactive_game_round():
         joystick = pygame.joystick.Joystick(j)
         joystick.rumble(100, 400, 1)
 
+    # TODO: reveal all!
     draw_board()
     time.sleep(5)  # long sleep
     highlighted_pos = None
