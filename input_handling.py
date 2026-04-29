@@ -73,7 +73,7 @@ def input_handling():
         else:
             print(event)
 
-        time.sleep(0.1)
+        time.sleep(0.05)
 
 
 def vibrate_controller():

@@ -143,7 +143,7 @@ def run_interactive_game_round():
             )
 
         gs.state = check_solution(gs.board, gs.player_solution)
-        time.sleep(1e-5)  # small sleep
+        time.sleep(1e-3)  # small sleep
 
     if gs.state == 1:
         print("won")
@@ -162,7 +162,7 @@ def run_interactive_game_round():
     input_handling.clear_inputs()
     while not input_handling.has_any_input():
         draw_board()
-        time.sleep(1e-6)
+        time.sleep(1e-3)
 
 
 def run_automatic_game_round():
