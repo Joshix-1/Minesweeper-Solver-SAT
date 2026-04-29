@@ -109,9 +109,8 @@ def draw_board():
 
 
 def run_interactive_game_round():
-    global highlighted_pos
+    global highlighted_pos, is_automatic_game
     highlighted_pos = (0, 0)
-    global is_automatic_game
 
     init_game_state()
 
@@ -148,9 +147,8 @@ def run_interactive_game_round():
 
 
 def run_automatic_game_round():
-    global highlighted_pos
+    global highlighted_pos, is_automatic_game
     highlighted_pos = None
-    global is_automatic_game
     init_game_state()
 
     _time = time.perf_counter()
