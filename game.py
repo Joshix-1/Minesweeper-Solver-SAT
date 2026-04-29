@@ -6,7 +6,7 @@ import time
 
 import input_handling
 from solver import sat_inspect_generator, Solution
-from solver_implementation import check_solution
+from solver_implementation import check_solution, update_solution
 import game_state as gs
 from rendering import *
 
@@ -156,13 +156,10 @@ def run_interactive_game_round():
     time.sleep(5)  # long sleep
     highlighted_pos = None
 
-
     if gs.state == -1:
-        for x in range(gs.board.n_cols):
-            for y in range(gs.board.n_rows):
-                gs.reveal_node((x, y))
+        update_solution(gs.player_solution, gs.board.reveal_nodes(gs.player_solution.nodes))
 
-
+    input_handling.clear_inputs()
     while not input_handling.has_any_input():
         draw_board()
         time.sleep(1e-6)

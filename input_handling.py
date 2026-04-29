@@ -11,14 +11,14 @@ BTN_03 = 290
 BTN_04 = 291
 BTN_09 = 296
 BTN_10 = 297
-BUTTONS = {
+BUTTONS = frozenset((
     BTN_01,
     BTN_02,
     BTN_03,
     BTN_04,
     BTN_09,
     BTN_10,
-}
+))
 BUTTON_PRESSES: dict[int, bool] = {}
 
 def get_movement() -> tuple[int, int]:
@@ -33,9 +33,16 @@ def get_button(button: int) -> bool:
     return BUTTON_PRESSES.pop(button, False)
 
 
+def clear_inputs():
+    global dx, dy
+    BUTTON_PRESSES.clear()
+    dx = 0
+    dy = 0
+
+
 def has_any_input() -> bool:
     global dx, dy
-    value = any(BUTTON_PRESSES.values()) or dx or dy
+    value = any(BUTTON_PRESSES.values())
     BUTTON_PRESSES.clear()
     dx = 0
     dy = 0
