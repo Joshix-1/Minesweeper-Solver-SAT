@@ -1,5 +1,6 @@
 import os
 
+os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
 
 import time
@@ -37,7 +38,7 @@ def has_any_input() -> bool:
 def input_handling():
     global dx, dy
 
-    pygame.joystick.init()
+    pygame.init()
 
     while pygame.joystick.get_count() == 0:
         time.sleep(1)
