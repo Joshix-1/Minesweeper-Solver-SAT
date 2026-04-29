@@ -228,6 +228,7 @@ is_automatic_game = True
 if __name__ == "__main__":
     _ = input_handling.start()
     while True:
+        input_handling.clear_inputs()
         if is_automatic_game:
             run_automatic_game_round()
         else:
