@@ -44,13 +44,14 @@ def input_handling():
         time.sleep(1)
 
     joystick = pygame.joystick.Joystick(0)
-    joystick.init()
 
     print("Starting listening to joysticks")
 
     while True:
-        print("axis", [joystick.get_axis(axis) for axis in range(joystick.get_numaxes())])
-        print("btns", [joystick.get_button(button) for button in range(joystick.get_numbuttons())])
+        for j in range(pygame.joystick.get_count()):
+            joy = pygame.joystick.Joystick(j)
+            print("axis", j, [joy.get_axis(axis) for axis in range(joy.get_numaxes())])
+            print("btns", j, [joy.get_button(button) for button in range(joy.get_numbuttons())])
 
         for axis in range(min(2, joystick.get_numaxes())):
             value = joystick.get_axis(axis)
