@@ -41,6 +41,7 @@ def input_handling():
     joystick = pygame.joystick.Joystick(0)
 
     while True:
+        print(f"({dx=}, {dy=}) {BUTTON_PRESSES=}")
         for axis in range(min(2, joystick.get_numaxes())):
             value = joystick.get_axis(axis)
             if abs(value) > 0.5:
