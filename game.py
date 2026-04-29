@@ -18,7 +18,13 @@ if False:
             pos_idx = i % (13 * 13)
             initial = pos_idx // 13, pos_idx % 13
             boards[pos_idx].add(frozenset(gs.generate_fair_board(13, 13, 30 + random.randrange(6), initial, max_depth=1, remainder_cutoff=16, max_attempts=1000).get_mines()))
-        print([list(b) for b in boards], file=f, flush=True)
+
+        for i in range(len(boards)):
+                print(f"""
+def get_boards_{i}():
+    return {list(boards)[i]!r}
+""", file=f, flush=True)
+
     sys.exit(0)
 
 
