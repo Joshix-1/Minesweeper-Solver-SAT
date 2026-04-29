@@ -118,15 +118,22 @@ def run_interactive_game_round():
     while gs.state == 0:
         draw_board()
 
-        if input_handling.get_button(input_handling.BTN_04): # keine Bombe
+        if (
+            input_handling.get_button(input_handling.BTN_04)
+            or input_handling.get_button(input_handling.BTN_04)
+        ):
             gs.reveal_node(highlighted_pos)
-        if input_handling.get_button(input_handling.BTN_02): # flagge tooglen
+        if (
+            input_handling.get_button(input_handling.BTN_02)
+            or input_handling.get_button(input_handling.BTN_03)
+        ):
             gs.toggle_flag(highlighted_pos)
         if (
             input_handling.get_button(input_handling.BTN_09)
             or input_handling.get_button(input_handling.BTN_10)
         ): # cancel Game
             is_automatic_game = True
+            return
 
         (dx, dy) = input_handling.get_movement()
         if dx or dy:
