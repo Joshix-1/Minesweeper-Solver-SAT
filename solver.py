@@ -123,6 +123,7 @@ def sat_inspect_cell(solution, source, depth=1):
             break
 
     # find all variables which have only one value over all solutions to CNF
+    nodes = []
     if solutions:
         for j, first in enumerate(solutions[0]):
             certain = True
@@ -133,9 +134,13 @@ def sat_inspect_cell(solution, source, depth=1):
             if certain:
                 v = first
                 node = variable_by_node.inv[abs(v)]
-                yield node
+                nodes.append(node)
                 if v > 0:
                     solution.grid.nodes[node]['flagged'] = True
+
+    # yield flags first
+    nodes.sort(key=lambda n: not solution.grid.nodes[n]['flagged'])
+    yield from nodes
 
 
 def sat_inspect_generator(solution, depth=1):
