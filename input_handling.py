@@ -1,3 +1,7 @@
+import os
+
+os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
+
 import time
 import threading
 import pygame
