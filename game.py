@@ -145,11 +145,23 @@ def run_interactive_game_round():
         gs.state = check_solution(gs.board, gs.player_solution)
         time.sleep(1e-5)  # small sleep
 
+    if gs.state == 1:
+        print("won")
+    if gs.state == -1:
+        print("lost")
+
+
     input_handling.vibrate_controller()
-    # TODO: reveal all!
     draw_board()
     time.sleep(5)  # long sleep
     highlighted_pos = None
+
+
+    if gs.state == -1:
+        for x in range(gs.board.n_cols):
+            for y in range(gs.board.n_rows):
+                gs.reveal_node((x, y))
+
 
     while not input_handling.has_any_input():
         draw_board()
