@@ -3,4 +3,5 @@ networkx==3.6.1
 python-sat==1.9.dev2
 rgbmatrix @ git+https://github.com/Joshix-1/rpi-rgb-led-matrix@70355c2249c1bfa4654829e0bfde79706ea89db6
 six==1.17.0
+evdev==1.9.3
 pygame==2.6.1

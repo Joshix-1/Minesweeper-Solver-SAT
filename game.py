@@ -4,25 +4,12 @@ import random
 import sys
 import time
 
+import input_handling
 from solver import sat_inspect_generator, Solution
 from solver_implementation import check_solution
 import game_state as gs
 from rendering import *
 
-#SEE: https://github.com/pygame/pygame/blob/main/examples/headless_no_windows_needed.py
-
-os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
-# set SDL to use the dummy NULL video driver,
-#   so it doesn't need a windowing system.
-os.environ["SDL_VIDEODRIVER"] = "dummy"
-
-import pygame, pygame.display, pygame.event, pygame.joystick
-pygame.display.init()
-pygame.joystick.init()
-_screen = pygame.display.set_mode((1, 1))
-
-for i in range(pygame.joystick.get_count()):
-    pygame.joystick.Joystick(i).init()
 
 if False:
     boards = set()
@@ -132,27 +119,14 @@ def run_interactive_game_round():
     while gs.state == 0:
         draw_board()
 
-        dx = 0
-        dy = 0
+        if input_handling.get_button(1): # keine Bombe
+            gs.reveal_node(highlighted_pos)
+        if input_handling.get_button(0): # flagge tooglen
+            gs.toggle_flag(highlighted_pos)
+        if input_handling.get_button(8) or input_handling.get_button(9): # cancel Game
+            is_automatic_game = True
 
-        for event in pygame.event.get():
-            print(event, event.type == pygame.JOYAXISMOTION, event.type == pygame.JOYBUTTONUP)
-            if event.type == pygame.JOYAXISMOTION:
-                if abs(event.value) > 0.5:
-                    normed_value = 1 if event.value > 0 else -1
-                    if event.axis == 0:
-                        dx += normed_value
-                    else:
-                        dy += normed_value
-            if event.type == pygame.JOYBUTTONUP:
-                if event.button == 1: # keine Bombe
-                    gs.reveal_node(highlighted_pos)
-                if event.button == 0: # flagge tooglen
-                    gs.toggle_flag(highlighted_pos)
-                if event.button in (8, 9): # cancel Game
-                    is_automatic_game = True
-                    return
-
+        (dx, dy) = input_handling.get_movement()
         if dx or dy:
             highlighted_pos = (
                 (highlighted_pos[0] + dx) % gs.n_cols,
@@ -162,16 +136,13 @@ def run_interactive_game_round():
         gs.state = check_solution(gs.board, gs.player_solution)
         time.sleep(1e-5)  # small sleep
 
-    for j in range(pygame.joystick.get_count()):
-        joystick = pygame.joystick.Joystick(j)
-        joystick.rumble(100, 400, 1)
-
+    input_handling.vibrate_controller()
     # TODO: reveal all!
     draw_board()
     time.sleep(5)  # long sleep
     highlighted_pos = None
 
-    while not any_player_input():
+    while not input_handling.has_any_input():
         draw_board()
         time.sleep(1e-6)
 
@@ -185,7 +156,7 @@ def run_automatic_game_round():
     _time = time.perf_counter()
 
     while gs.state == 0:
-        if any_player_input():
+        if input_handling.has_any_input():
             is_automatic_game = False
             return
         draw_board()
@@ -234,17 +205,11 @@ def run_automatic_game_round():
 
     time.sleep(10)
 
-def any_player_input():
-    for event in pygame.event.get():
-        if event.type == pygame.JOYAXISMOTION:
-            return True
-        if event.type == pygame.JOYBUTTONUP:
-            return True
-    return False
 
 is_automatic_game = True
 
 if __name__ == "__main__":
+    _ = input_handling.start()
     while True:
         if is_automatic_game:
             run_automatic_game_round()
