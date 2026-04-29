@@ -57,6 +57,7 @@ def input_handling():
             _input_handling()
         except Exception:
             traceback.print_exc()
+            time.sleep(1)
 
 
 def _input_handling():
