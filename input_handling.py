@@ -49,9 +49,12 @@ def input_handling():
     print("Starting listening to joysticks")
 
     while True:
+        print("axis", [joystick.get_axis(axis) for axis in range(joystick.get_numaxes())])
+        print("btns", [joystick.get_button(button) for button in range(joystick.get_numbuttons())])
+
         for axis in range(min(2, joystick.get_numaxes())):
             value = joystick.get_axis(axis)
-            print("axis", axis, "has value", value)
+            # print("axis", axis, "has value", value)
             if abs(value) > 0.5:
                 normed_value = 1 if value > 0 else -1
                 if value == 0:
@@ -67,7 +70,7 @@ def input_handling():
                 print("pressed", value)
             LAST_BUTTON_PRESSED[button] = value
 
-        time.sleep(1e-3)
+        time.sleep(0.1)
 
 
 def vibrate_controller():
