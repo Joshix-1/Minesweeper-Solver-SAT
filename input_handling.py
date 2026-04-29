@@ -39,6 +39,7 @@ def input_handling():
         time.sleep(1)
 
     joystick = pygame.joystick.Joystick(0)
+    joystick.init()
 
     while True:
         print(f"({dx=}, {dy=}) {BUTTON_PRESSES=}")
