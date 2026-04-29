@@ -1,3 +1,4 @@
+import traceback
 import random
 import itertools as it
 
@@ -29,6 +30,8 @@ class Solution:
             self.grid.nodes[n]['solved'] = False
             self.grid.nodes[n]['value'] = 0
             self.grid.nodes[n]['flagged'] = False
+
+        self.nodes = list(self.grid.nodes)
 
     def __str__(self):
         string = ''
@@ -69,6 +72,10 @@ def sat_inspect_cell(solution, source, depth=1):
         )
     }
     if len(border_nodes) == 0:
+        try:
+            solution.nodes.remove(source)
+        except Exception:
+            traceback.print_exc()
         return
 
     # map all unknown nodes to boolean variable indices
@@ -132,7 +139,8 @@ def sat_inspect_cell(solution, source, depth=1):
 
 
 def sat_inspect_generator(solution, depth=1):
-    for n in solution.grid.nodes:
+    random.shuffle(solution.nodes)
+    for n in solution.nodes or solution.grid.nodes:
         yield from sat_inspect_cell(solution, n, depth=depth)
 
 
