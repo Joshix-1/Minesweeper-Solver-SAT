@@ -222,12 +222,17 @@ def run_automatic_game_round():
 
 
     draw_board()
+    time.sleep(10)
+
     if gs.state == 1:
         print("won")
     if gs.state == -1:
         print("lost")
 
-    time.sleep(10)  # small sleep
+    highlighted_pos = None
+    draw_board()
+
+    time.sleep(10)
 
 def any_player_input():
     for event in pygame.event.get():
