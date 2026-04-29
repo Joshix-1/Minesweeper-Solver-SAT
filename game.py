@@ -12,12 +12,13 @@ from rendering import *
 
 
 if False:
-    boards = set()
-    for i in range(2028):
-        pos_idx = i % (13 * 13)
-        initial = pos_idx // 13, pos_idx % 13
-        boards.add(frozenset(gs.generate_fair_board(13, 13, 30 + random.randrange(6), initial, max_depth=1, remainder_cutoff=16, max_attempts=1000).get_mines()))
-    print(boards)
+    with open("test.py", "wt") as f:
+        boards: list[set[frozenset[tuple[int, int]]]] = [set() for _ in range(13 * 13)]
+        for i in range(6760):
+            pos_idx = i % (13 * 13)
+            initial = pos_idx // 13, pos_idx % 13
+            boards[pos_idx].add(frozenset(gs.generate_fair_board(13, 13, 30 + random.randrange(6), initial, max_depth=1, remainder_cutoff=16, max_attempts=1000).get_mines()))
+        print([list(b) for b in boards], file=f, flush=True)
     sys.exit(0)
 
 
