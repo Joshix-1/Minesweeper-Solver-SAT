@@ -51,6 +51,7 @@ def input_handling():
     while True:
         for axis in range(min(2, joystick.get_numaxes())):
             value = joystick.get_axis(axis)
+            print("axis", axis, "has value", value)
             if abs(value) > 0.5:
                 normed_value = 1 if value > 0 else -1
                 if value == 0:
@@ -60,8 +61,10 @@ def input_handling():
 
         for button in BUTTONS:
             if not (value := joystick.get_button(button)) and LAST_BUTTON_PRESSED.get(button, False):
+                print("released", value)
                 BUTTON_PRESSES[button] = True
-
+            elif value:
+                print("pressed", value)
             LAST_BUTTON_PRESSED[button] = value
 
         time.sleep(1e-3)
