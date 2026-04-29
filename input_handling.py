@@ -35,7 +35,7 @@ def input_handling():
 
     import evdev
 
-    device = evdev.InputDevice('/dev/input/event1')
+    device = evdev.InputDevice('/dev/input/event0')
 
     print("Starting listening to joysticks")
 
