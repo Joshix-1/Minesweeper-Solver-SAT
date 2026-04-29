@@ -1,6 +1,8 @@
+import traceback
 import os
 import time
 import threading
+import pathlib
 
 dx = 0
 dy = 0
@@ -50,11 +52,26 @@ def has_any_input() -> bool:
 
 
 def input_handling():
+    while True:
+        try:
+            _input_handling()
+        except Exception:
+            traceback.print_exc()
+
+
+def _input_handling():
     global dx, dy
 
     import evdev
 
-    device = evdev.InputDevice('/dev/input/event0')
+    while True:
+        try:
+            path = next(pathlib.Path("/dev/input/").glob("event*"))
+            break
+        except StopIteration:
+            time.sleep(1)
+
+    device = evdev.InputDevice(path.as_posix())
 
     print("Starting listening to joysticks")
 
@@ -81,7 +98,6 @@ def vibrate_controller():
 
 
 def start() -> threading.Thread:
-    thread = threading.Thread(target=input_handling)
-    thread.daemon = True
+    thread = threading.Thread(target=input_handling, daemon=True)
     thread.start()
     return thread
