@@ -5,8 +5,20 @@ import threading
 dx = 0
 dy = 0
 
-BUTTONS = [1, 0, 8, 9]
-LAST_BUTTON_PRESSED: dict[int, bool] = {}
+BTN_01 = 288
+BTN_02 = 289
+BTN_03 = 290
+BTN_04 = 291
+BTN_09 = 296
+BTN_10 = 297
+BUTTONS = {
+    BTN_01,
+    BTN_02,
+    BTN_03,
+    BTN_04,
+    BTN_09,
+    BTN_10,
+}
 BUTTON_PRESSES: dict[int, bool] = {}
 
 def get_movement() -> tuple[int, int]:
@@ -41,9 +53,16 @@ def input_handling():
 
     for event in device.read_loop():
         if event.type == evdev.ecodes.EV_KEY:
-            print(f"key {event.code=} {event.value=}")
+            if event.value == 0 and event.code in BUTTONS:
+                # has left key go
+                BUTTON_PRESSES[event.code] = True
         elif event.type == evdev.ecodes.EV_ABS:
-            print(f"abs {event.code=} {event.value=}")
+            if event.code == evdev.ecodes.ABS_HAT0X:
+                dx = int(event.value)
+            elif event.code == evdev.ecodes.ABS_HAT0Y:
+                dy = int(event.value)
+            else:
+                print(f"abs {event.code=} {event.value=}")
         else:
             print(event)
 
