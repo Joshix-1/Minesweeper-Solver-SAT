@@ -62,13 +62,15 @@ def generate_fair_board(n_rows, n_cols, n_mines, initial, max_depth=1, remainder
     return generate_fun_board(n_rows, n_cols, n_mines, initial)
 
 
-def update_solution(solution, revealed):
+def update_solution(solution, revealed) -> Iterable[tuple[int, int]]:
     for node, value in revealed:
         solution.grid.nodes[node]['solved'] = True
         solution.grid.nodes[node]['value'] = value
+        yield node
 
-def update_solutions(solutions: tuple[Solution, ...], revealed):
+def update_solutions(solutions: tuple[Solution, ...], revealed) -> Iterable[tuple[int, int]]:
     for node, value in revealed:
         for solution in solutions:
             solution.grid.nodes[node]['solved'] = True
             solution.grid.nodes[node]['value'] = value
+        yield node

@@ -16,7 +16,7 @@ state = 0  # -1: loss, 0: ongoing, 1: win
 start_time = 0
 
 
-def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = False):
+def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = False) -> Iterable[tuple[int, int]]:
     global board
     global player_solution
     global solver_solution
@@ -44,20 +44,20 @@ def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = Fal
 
     player_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
     solver_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
-    update_solutions((player_solution, solver_solution), board.reveal_node(initial))
+    yield from update_solutions((player_solution, solver_solution), board.reveal_node(initial))
 
     state = 0
     start_time = time.time()
 
 
-def reveal_node(move: tuple[int, int]):
+def reveal_node(move: tuple[int, int]) -> Iterable[tuple[int, int]]:
     global board
     global player_solution
 
     if not board.has_reveal():
-        new_state(move)
+        return new_state(move)
     else:
-        update_solutions((player_solution, solver_solution), board.reveal_node(move))
+        return update_solutions((player_solution, solver_solution), board.reveal_node(move))
 
 
 def toggle_flag(pos: tuple[int, int]):

@@ -32,7 +32,8 @@ def init_game_state():
     gs.n_rows = 13
     gs.n_cols = 13
     gs.n_mines = gs.n_rows * gs.n_cols // 6
-    gs.new_state()
+    for _ in gs.new_state():
+        pass
 
 USE_RGB_MATRIX = not os.environ.get("DO_NOT_USE_RGB_MATRIX")
 if USE_RGB_MATRIX:
@@ -43,7 +44,8 @@ else:
     offscreen_canvas = None
 
 highlighted_pos: None | tuple[int, int] = None
-
+draw_everything: bool =  True
+updated_tiles: set[tuple[int, int]] = set()
 
 if offscreen_canvas is not None:
     def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
@@ -67,36 +69,48 @@ else:
                 draw_pixel((x + dx, y + dy), colour)
 
 
+def draw_node(node, x, y):
+    if node['flagged']:
+        draw_4x4_flag(x, y, drawpx=draw_pixel)
+    elif node['solved']:
+        if node['value'] == -1:
+            draw_rect((x, y), (4, 4), (255, 0, 0))
+            # draw_4x4_mine(x, y, drawpx=draw_pixel)
+        elif offscreen_canvas is not None:
+            offscreen_canvas.DrawNumber(x, y, node['value'])
+        else:
+            draw_4x4_number(x, y, node['value'], drawpx=draw_pixel)
+    else:
+        draw_rect((x, y), (4, 4), (22, 22, 22))
+
 def draw_board():
-    global offscreen_canvas
+    global offscreen_canvas, draw_everything, updated_tiles
 
     start = time.perf_counter()
 
-    if offscreen_canvas is not None:
-        offscreen_canvas.Clear()
-    else:
-        for x in range(64):
-            for y in range(64):
-                image.putpixel((x, y), (0, 0, 0))
-
     self = gs.player_solution
-    for i in range(self.n_rows):
-        x = i * 5
-        for j in range(self.n_cols):
+    if draw_everything:
+        if offscreen_canvas is not None:
+            offscreen_canvas.Clear()
+        else:
+            for x in range(64):
+                for y in range(64):
+                    image.putpixel((x, y), (0, 0, 0))
+
+        for i in range(self.n_rows):
+            x = i * 5
+            for j in range(self.n_cols):
+                y = j * 5
+                node = self.grid.nodes[i, j]
+                draw_node(node, x, y)
+    else:
+        for (i, j) in updated_tiles:
+            x = i * 5
             y = j * 5
+            draw_rect((max(x - 1, 0), max(y - 1, 0)), (5, 5), (0, 0, 0))
             node = self.grid.nodes[i, j]
-            if node['flagged']:
-                draw_4x4_flag(x, y, drawpx=draw_pixel)
-            elif node['solved']:
-                if node['value'] == -1:
-                    draw_rect((x, y), (4, 4), (255, 0, 0))
-                    # draw_4x4_mine(x, y, drawpx=draw_pixel)
-                elif offscreen_canvas is not None:
-                    offscreen_canvas.DrawNumber(x, y, node['value'])
-                else:
-                    draw_4x4_number(x, y, node['value'], drawpx=draw_pixel)
-            else:
-                draw_rect((x, y), (4, 4), (22, 22, 22))
+            draw_node(node, x, y)
+
 
     if highlighted_pos:
         (x, y) = highlighted_pos
@@ -118,6 +132,9 @@ def draw_board():
     else:
         image.save("frame.png")
 
+    draw_everything = False
+    updated_tiles.clear()
+
 
 def run_interactive_game_round():
     global highlighted_pos, is_automatic_game
@@ -133,12 +150,13 @@ def run_interactive_game_round():
             input_handling.get_button(input_handling.BTN_04)
             or input_handling.get_button(input_handling.BTN_04)
         ):
-            gs.reveal_node(highlighted_pos)
+            updated_tiles.update(gs.reveal_node(highlighted_pos))
         if (
             input_handling.get_button(input_handling.BTN_02)
             or input_handling.get_button(input_handling.BTN_03)
         ):
             gs.toggle_flag(highlighted_pos)
+            updated_tiles.add(highlighted_pos)
         if (
             input_handling.get_button(input_handling.BTN_09)
             or input_handling.get_button(input_handling.BTN_10)
@@ -148,6 +166,7 @@ def run_interactive_game_round():
 
         (dx, dy) = input_handling.get_movement()
         if dx or dy:
+            updated_tiles.add(highlighted_pos)
             highlighted_pos = (
                 (highlighted_pos[0] + dx) % gs.n_cols,
                 (highlighted_pos[1] + dy) % gs.n_rows,
@@ -165,10 +184,11 @@ def run_interactive_game_round():
     input_handling.vibrate_controller()
     draw_board()
     time.sleep(5)  # long sleep
+    updated_tiles.add(highlighted_pos)
     highlighted_pos = None
 
     if gs.state == -1:
-        update_solution(gs.player_solution, gs.board.reveal_nodes(gs.player_solution.nodes))
+        updated_tiles.update(update_solution(gs.player_solution, gs.board.reveal_nodes(gs.player_solution.nodes)))
 
     input_handling.clear_inputs()
     while not input_handling.has_any_input():
@@ -177,7 +197,7 @@ def run_interactive_game_round():
 
 
 def run_automatic_game_round():
-    global highlighted_pos, is_automatic_game
+    global highlighted_pos, is_automatic_game, draw_everything
     highlighted_pos = None
     init_game_state()
 
@@ -189,6 +209,8 @@ def run_automatic_game_round():
             return
         draw_board()
         # print(f"draw_board took {time.perf_counter() - _time}s")
+        if highlighted_pos:
+            updated_tiles.add(highlighted_pos)
 
         try:
             move = next(sat_inspect_generator(gs.solver_solution))
@@ -208,8 +230,9 @@ def run_automatic_game_round():
         is_flag = gs.board.value_at(move) == -1
         if is_flag:
             gs.add_flag(move)
+            updated_tiles.add(move)
         else:
-            gs.reveal_node(move)
+            updated_tiles.update(gs.reveal_node(move))
 
         gs.state = check_solution(gs.board, gs.player_solution)
         took = time.perf_counter() - _time
@@ -219,7 +242,7 @@ def run_automatic_game_round():
             print(f"took {took}s")
         _time = time.perf_counter()
 
-
+    draw_everything = True
     draw_board()
     time.sleep(10)
 
@@ -228,6 +251,8 @@ def run_automatic_game_round():
     if gs.state == -1:
         print("lost")
 
+    if highlighted_pos:
+        updated_tiles.add(highlighted_pos)
     highlighted_pos = None
     draw_board()
 
@@ -240,6 +265,7 @@ if __name__ == "__main__":
     _ = input_handling.start()
     while True:
         input_handling.clear_inputs()
+        draw_everything = True
         if is_automatic_game:
             run_automatic_game_round()
         else:
