@@ -70,8 +70,6 @@ def draw_node(node, x, y):
 def draw_board(*, swap_on_vsync: bool = True):
     global offscreen_canvas, draw_everything, updated_tiles
 
-    # start = time.perf_counter()
-
     self = gs.player_solution
     if draw_everything:
         offscreen_canvas.Clear()
@@ -113,7 +111,7 @@ def draw_board(*, swap_on_vsync: bool = True):
         offscreen_canvas.SetPixel(end_x, end_y, *WHITE)
 
         if input_handling.has_powers():
-            if -1 == gs.board.value_at(highlighted_pos):
+            if -1 != gs.board.value_at(highlighted_pos):
                 offscreen_canvas.SetPixel(0, 0, *WHITE)
             else:
                 offscreen_canvas.SetPixel(0, 0, 0, 0, 0)
@@ -126,8 +124,6 @@ def draw_board(*, swap_on_vsync: bool = True):
 
     draw_everything = False
     updated_tiles.clear()
-
-    # print("drawing took", time.perf_counter() - start, "s")
 
 
 def run_interactive_game_round():
@@ -208,7 +204,6 @@ def run_automatic_game_round():
             is_automatic_game = False
             return
         draw_board()
-        # print(f"draw_board took {time.perf_counter() - _time}s")
         if highlighted_pos:
             updated_tiles.add(highlighted_pos)
 
@@ -237,8 +232,7 @@ def run_automatic_game_round():
             updated_tiles.update(gs.reveal_node(move))
 
         gs.state = check_solution(gs.board, gs.player_solution)
-        took = time.perf_counter() - _time
-        if took < 2:
+        if (took := time.perf_counter() - _time) < 2:
             time.sleep(2 - took)
         else:
             print(f"took {took}s")
