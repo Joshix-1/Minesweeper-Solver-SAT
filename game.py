@@ -109,7 +109,7 @@ def draw_board(*, swap_on_vsync: bool = True):
             y = j * 5
             draw_rect(
                 (max(x - 1, 0), max(y - 1, 0)),
-                (5 if i == 12 else 6, 5 if j == 12 else 6),
+                (5 if i == 12 or i == 0 else 6, 5 if j == 12 or j == 0 else 6),
                 (0, 0, 0),
             )
             node = self.grid.nodes[i, j]
