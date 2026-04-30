@@ -1,4 +1,6 @@
 #!venv/bin/python3
+from rendering import create_rgbmatrix, WHITE
+
 import os
 import random
 import sys
@@ -8,7 +10,6 @@ import input_handling
 from solver import sat_inspect_generator, Solution
 from solver_implementation import check_solution, update_solution
 import game_state as gs
-from rendering import *
 
 
 if False:
@@ -35,53 +36,27 @@ def init_game_state():
     for _ in gs.new_state():
         pass
 
-USE_RGB_MATRIX = not os.environ.get("DO_NOT_USE_RGB_MATRIX")
-if USE_RGB_MATRIX:
-    matrix = create_rgbmatrix()
-    offscreen_canvas = matrix.CreateFrameCanvas()
-else:
-    matrix = None
-    offscreen_canvas = None
+
+matrix = create_rgbmatrix()
+offscreen_canvas = matrix.CreateFrameCanvas()
 
 highlighted_pos: None | tuple[int, int] = None
 draw_everything: bool =  True
 updated_tiles: set[tuple[int, int]] = set()
 
-if offscreen_canvas is not None:
-    def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
-        x, y = pos
-        offscreen_canvas.SetPixel(x, y, *colour)
-
-    def draw_rect(pos: tuple[int, int], size: tuple[int, int], colour: tuple[int, int, int]) -> None:
-        offscreen_canvas.SubFill(*pos, *size, *colour)
-else:
-    from PIL import Image
-    image = Image.new("RGB", size=(64, 64))
-    def draw_pixel(pos: tuple[int, int], colour: tuple[int, int, int]) -> None:
-        # print(f"draw_pixel({pos}, {colour})")
-        image.putpixel(pos, colour)
-
-    def draw_rect(pos: tuple[int, int], size: tuple[int, int], colour: tuple[int, int, int]) -> None:
-        (x, y) = pos
-        (w, h) = size
-        for dx in range(w):
-            for dy in range(h):
-                draw_pixel((x + dx, y + dy), colour)
-
 
 def draw_node(node, x, y):
     if node['flagged']:
-        draw_4x4_flag(x, y, drawpx=draw_pixel)
+        offscreen_canvas.SetPixel(x + 1, y + 1, 255, 0, 0)
+        offscreen_canvas.SetPixel(x + 2, y + 1, *WHITE)
+        offscreen_canvas.SetPixel(x + 2, y + 2, *WHITE)
     elif node['solved']:
         if node['value'] == -1:
-            draw_rect((x, y), (4, 4), (255, 0, 0))
-            # draw_4x4_mine(x, y, drawpx=draw_pixel)
-        elif offscreen_canvas is not None:
-            offscreen_canvas.DrawNumber(x, y, node['value'])
+            offscreen_canvas.SubFill(x, y, 4, 4, 255, 0, 0)
         else:
-            draw_4x4_number(x, y, node['value'], drawpx=draw_pixel)
+            offscreen_canvas.DrawNumber(x, y, node['value'])
     else:
-        draw_rect((x, y), (4, 4), (22, 22, 22))
+        offscreen_canvas.SubFill(x, y, 4, 4, 22, 22, 22)
 
 def draw_board(*, swap_on_vsync: bool = True):
     global offscreen_canvas, draw_everything, updated_tiles
@@ -90,12 +65,7 @@ def draw_board(*, swap_on_vsync: bool = True):
 
     self = gs.player_solution
     if draw_everything:
-        if offscreen_canvas is not None:
-            offscreen_canvas.Clear()
-        else:
-            for x in range(64):
-                for y in range(64):
-                    image.putpixel((x, y), (0, 0, 0))
+        offscreen_canvas.Clear()
 
         for i in range(self.n_rows):
             x = i * 5
@@ -107,10 +77,14 @@ def draw_board(*, swap_on_vsync: bool = True):
         for (i, j) in updated_tiles:
             x = i * 5
             y = j * 5
-            draw_rect(
-                (max(x - 1, 0), max(y - 1, 0)),
-                (5 if i == 12 or i == 0 else 6, 5 if j == 12 or j == 0 else 6),
-                (0, 0, 0),
+            offscreen_canvas.SubFill(
+                max(x - 1, 0), # x
+                max(y - 1, 0), # y
+                5 if i == 12 or i == 0 else 6, # width
+                5 if j == 12 or j == 0 else 6,  # height
+                0, # red
+                0, # green
+                0, # blue
             )
             node = self.grid.nodes[i, j]
             draw_node(node, x, y)
@@ -124,19 +98,16 @@ def draw_board(*, swap_on_vsync: bool = True):
         start_y = max(y - 1, 0)
         end_x = min(x + 4, 63)
         end_y = min(y + 4, 63)
-        draw_pixel((start_x, start_y), WHITE)
-        draw_pixel((end_x, start_y), WHITE)
-        draw_pixel((start_x, end_y), WHITE)
-        draw_pixel((end_x, end_y), WHITE)
+        offscreen_canvas.SetPixel(start_x, start_y, *WHITE)
+        offscreen_canvas.SetPixel(end_x, start_y, *WHITE)
+        offscreen_canvas.SetPixel(start_x, end_y, *WHITE)
+        offscreen_canvas.SetPixel(end_x, end_y, *WHITE)
 
     if not swap_on_vsync:
         return
 
-    if matrix is not None:
-        offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
-        draw_board(swap_on_vsync=False)
-    else:
-        image.save("frame.png")
+    offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+    draw_board(swap_on_vsync=False)
 
     draw_everything = False
     updated_tiles.clear()
