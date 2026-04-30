@@ -83,7 +83,7 @@ def draw_node(node, x, y):
     else:
         draw_rect((x, y), (4, 4), (22, 22, 22))
 
-def draw_board():
+def draw_board(*, swap_on_vsync: bool = True):
     global offscreen_canvas, draw_everything, updated_tiles
 
     start = time.perf_counter()
@@ -125,15 +125,19 @@ def draw_board():
         draw_pixel((start_x, end_y), WHITE)
         draw_pixel((end_x, end_y), WHITE)
 
-    print("drawing took", time.perf_counter() - start, "s")
+    if not swap_on_vsync:
+        return
 
     if matrix is not None:
         offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+        draw_board(swap_on_vsync=False)
     else:
         image.save("frame.png")
 
     draw_everything = False
     updated_tiles.clear()
+
+    print("drawing took", time.perf_counter() - start, "s")
 
 
 def run_interactive_game_round():
