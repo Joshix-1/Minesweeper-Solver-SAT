@@ -51,16 +51,19 @@ draw_everything: bool =  True
 updated_tiles: set[tuple[int, int]] = set()
 
 
+def draw_value(x, y, value):
+    if value == -1:
+        offscreen_canvas.SubFill(x, y, 4, 4, 255, 0, 0)
+    else:
+        offscreen_canvas.DrawNumber(x, y, value)
+
 def draw_node(node, x, y):
     if node['flagged']:
         offscreen_canvas.SetPixel(x + 1, y + 1, 255, 0, 0)
         offscreen_canvas.SetPixel(x + 2, y + 1, *WHITE)
         offscreen_canvas.SetPixel(x + 2, y + 2, *WHITE)
     elif node['solved']:
-        if node['value'] == -1:
-            offscreen_canvas.SubFill(x, y, 4, 4, 255, 0, 0)
-        else:
-            offscreen_canvas.DrawNumber(x, y, node['value'])
+        draw_value(x, y, node['value'])
     else:
         offscreen_canvas.SubFill(x, y, 4, 4, 22, 22, 22)
 
@@ -135,6 +138,12 @@ def run_interactive_game_round():
             input_handling.get_button(input_handling.BTN_04)
             or input_handling.get_button(input_handling.BTN_04)
         ):
+            value = gs.board.value_at(highlighted_pos)
+            x, y = highlighted_pos
+            x *= 5
+            y *= 5
+            offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
+            draw_value(x, y, value)
             updated_tiles.update(gs.reveal_node(highlighted_pos))
         if (
             input_handling.get_button(input_handling.BTN_02)
@@ -211,6 +220,8 @@ def run_automatic_game_round():
                 move = (random.randrange(gs.board.n_cols), random.randrange(gs.board.n_rows))
 
         highlighted_pos = move
+
+        draw_board()
 
         is_flag = gs.board.value_at(move) == -1
         if is_flag:
