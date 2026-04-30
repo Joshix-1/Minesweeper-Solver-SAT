@@ -1,5 +1,4 @@
 #!venv/bin/python3
-import itertools
 import os
 import random
 import sys
@@ -46,7 +45,6 @@ else:
 
 highlighted_pos: None | tuple[int, int] = None
 draw_everything: bool =  True
-last_updated_tiles: set[tuple[int, int]] = set()
 updated_tiles: set[tuple[int, int]] = set()
 
 if offscreen_canvas is not None:
@@ -86,7 +84,7 @@ def draw_node(node, x, y):
         draw_rect((x, y), (4, 4), (22, 22, 22))
 
 def draw_board():
-    global offscreen_canvas, draw_everything, updated_tiles, last_updated_tiles
+    global offscreen_canvas, draw_everything, updated_tiles
 
     start = time.perf_counter()
 
@@ -106,7 +104,7 @@ def draw_board():
                 node = self.grid.nodes[i, j]
                 draw_node(node, x, y)
     else:
-        for (i, j) in itertools.chain(last_updated_tiles, updated_tiles):
+        for (i, j) in updated_tiles:
             x = i * 5
             y = j * 5
             draw_rect((max(x - 1, 0), max(y - 1, 0)), (5, 5), (0, 0, 0))
@@ -135,7 +133,6 @@ def draw_board():
         image.save("frame.png")
 
     draw_everything = False
-    updated_tiles, last_updated_tiles = last_updated_tiles, updated_tiles
     updated_tiles.clear()
 
 
