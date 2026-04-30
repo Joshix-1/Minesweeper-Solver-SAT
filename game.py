@@ -39,6 +39,12 @@ def init_game_state():
 
 matrix = create_rgbmatrix()
 offscreen_canvas = matrix.CreateFrameCanvas()
+init_game_state()
+
+for i in range(13):
+    x = i * 5
+    for j in range(13):
+        offscreen_canvas.SubFill(x, j * 4, 4, 4, 255, 255, 255)
 
 highlighted_pos: None | tuple[int, int] = None
 draw_everything: bool =  True
