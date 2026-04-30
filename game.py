@@ -70,6 +70,8 @@ else:
 def draw_board():
     global offscreen_canvas
 
+    start = time.perf_counter()
+
     if offscreen_canvas is not None:
         offscreen_canvas.Clear()
     else:
@@ -108,6 +110,8 @@ def draw_board():
         draw_pixel((end_x, start_y), WHITE)
         draw_pixel((start_x, end_y), WHITE)
         draw_pixel((end_x, end_y), WHITE)
+
+    print("drawing took", time.perf_counter() - start, "s")
 
     if matrix is not None:
         offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
