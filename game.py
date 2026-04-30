@@ -70,7 +70,7 @@ def draw_node(node, x, y):
 def draw_board(*, swap_on_vsync: bool = True):
     global offscreen_canvas, draw_everything, updated_tiles
 
-    start = time.perf_counter()
+    # start = time.perf_counter()
 
     self = gs.player_solution
     if draw_everything:
