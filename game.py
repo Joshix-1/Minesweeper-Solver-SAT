@@ -112,6 +112,12 @@ def draw_board(*, swap_on_vsync: bool = True):
         offscreen_canvas.SetPixel(start_x, end_y, *WHITE)
         offscreen_canvas.SetPixel(end_x, end_y, *WHITE)
 
+        if input_handling.has_powers():
+            if -1 == gs.board.value_at(highlighted_pos):
+                offscreen_canvas.SetPixel(0, 0, *WHITE)
+            else:
+                offscreen_canvas.SetPixel(0, 0, 0, 0, 0)
+
     if not swap_on_vsync:
         return
 
