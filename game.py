@@ -112,7 +112,7 @@ def draw_board(*, swap_on_vsync: bool = True):
     draw_everything = False
     updated_tiles.clear()
 
-    print("drawing took", time.perf_counter() - start, "s")
+    # print("drawing took", time.perf_counter() - start, "s")
 
 
 def run_interactive_game_round():
@@ -152,7 +152,7 @@ def run_interactive_game_round():
             )
 
         gs.state = check_solution(gs.board, gs.player_solution)
-        time.sleep(1e-3)  # small sleep
+        time.sleep(1e-4)  # small sleep
 
     if gs.state == 1:
         print("won")
@@ -172,7 +172,7 @@ def run_interactive_game_round():
     input_handling.clear_inputs()
     while not input_handling.has_any_input():
         draw_board()
-        time.sleep(1e-3)
+        time.sleep(1e-2)
 
 
 def run_automatic_game_round():
