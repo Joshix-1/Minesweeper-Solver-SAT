@@ -107,7 +107,11 @@ def draw_board(*, swap_on_vsync: bool = True):
         for (i, j) in updated_tiles:
             x = i * 5
             y = j * 5
-            draw_rect((max(x - 1, 0), max(y - 1, 0)), (5, 5), (0, 0, 0))
+            draw_rect(
+                (max(x - 1, 0), max(y - 1, 0)),
+                (5 if i == 12 else 6, 5 if j == 12 else 6),
+                (0, 0, 0),
+            )
             node = self.grid.nodes[i, j]
             draw_node(node, x, y)
 
