@@ -81,17 +81,20 @@ def _input_handling():
             if event.value == 0 and event.code in BUTTONS:
                 # has left key go
                 BUTTON_PRESSES[event.code] = True
+                time.sleep(0.04)
         elif event.type == evdev.ecodes.EV_ABS:
             if event.code == evdev.ecodes.ABS_HAT0X:
                 dx = int(event.value)
+                time.sleep(0.04)
             elif event.code == evdev.ecodes.ABS_HAT0Y:
                 dy = int(event.value)
+                time.sleep(0.04)
             else:
                 print(f"abs {event.code=} {event.value=}")
         else:
-            print(event)
+            pass # print(event)
 
-        time.sleep(0.05)
+        time.sleep(1e-4)
 
 
 def vibrate_controller():
