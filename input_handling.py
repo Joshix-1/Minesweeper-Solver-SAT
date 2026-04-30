@@ -116,7 +116,7 @@ def _input_handling():
 
 
 def vibrate_controller():
-    pass
+    pass # TODO
 
 
 def start() -> threading.Thread:
