@@ -109,10 +109,8 @@ def _input_handling():
             pass # print(event)
 
         if buffer in _SEQUENCES:
+            buffer.clear()
             _powers = not _powers
-            import game
-            game.draw_everything = True
-            game.matrix.Clear()
 
         time.sleep(sleep)
 
