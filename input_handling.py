@@ -104,7 +104,7 @@ def _input_handling():
                     buffer.append(event.code * event.value)
                 sleep = 1e-2
             else:
-                print(f"abs {event.code=} {event.value=}")
+                pass # print(f"abs {event.code=} {event.value=}")
         else:
             pass # print(event)
 
