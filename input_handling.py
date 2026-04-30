@@ -95,11 +95,13 @@ def _input_handling():
         elif event.type == evdev.ecodes.EV_ABS:
             if event.code == evdev.ecodes.ABS_HAT0X:
                 dx = int(event.value)
-                buffer.append(event.code * event.value)
+                if event.value:
+                    buffer.append(event.code * event.value)
                 sleep = 1e-2
             elif event.code == evdev.ecodes.ABS_HAT0Y:
                 dy = int(event.value)
-                buffer.append(event.code * event.value)
+                if event.value:
+                    buffer.append(event.code * event.value)
                 sleep = 1e-2
             else:
                 print(f"abs {event.code=} {event.value=}")
