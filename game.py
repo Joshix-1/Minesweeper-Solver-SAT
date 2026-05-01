@@ -214,6 +214,11 @@ def run_interactive_game_round():
     if gs.state == -1:
         updated_tiles.update(update_solution(gs.player_solution, gs.board.reveal_nodes(gs.player_solution.nodes)))
 
+    input_handling.vibrate_controller(
+        strong_magnitude=0x1000,
+        weak_magnitude=0x1000,
+        duration_ms=200,
+    )
     input_handling.clear_inputs()
     while not input_handling.has_any_input():
         draw_board()
