@@ -74,9 +74,10 @@ def input_handling():
             traceback.print_exc()
             time.sleep(1)
 
+device: "evdev.InputDevice" | None = None
 
 def _input_handling():
-    global dx, dy, _powers, _draw_everything
+    global dx, dy, _powers, _draw_everything, device
 
     import evdev
 
@@ -125,7 +126,27 @@ def _input_handling():
 
 
 def vibrate_controller():
-    pass # TODO
+    if not device:
+        return
+
+    from evdev import ff, ecodes
+
+    rumble = ff.Rumble(strong_magnitude=0x0000, weak_magnitude=0xffff)
+    effect_type = ff.EffectType(ff_rumble_effect=rumble)
+    duration_ms = 1000
+
+    effect = ff.Effect(
+        ecodes.FF_RUMBLE, -1, 0,
+        ff.Trigger(0, 0),
+        ff.Replay(duration_ms, 0),
+        effect_type
+    )
+
+    repeat_count = 1
+    effect_id = device.upload_effect(effect)
+    device.write(ecodes.EV_FF, effect_id, repeat_count)
+    time.sleep(duration_ms / 1000)
+    device.erase_effect(effect_id)
 
 
 def start() -> threading.Thread:
