@@ -140,7 +140,7 @@ def run_interactive_game_round():
             input_handling.get_button(input_handling.BTN_04)
             or input_handling.get_button(input_handling.BTN_04)
         ):
-            for node in gs.reveal_node(node):
+            for node in gs.reveal_node(highlighted_pos):
                 x, y = node
                 x *= 5
                 y *= 5
