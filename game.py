@@ -70,6 +70,8 @@ def draw_node(node, x, y):
 def draw_board(*, swap_on_vsync: bool = True):
     global offscreen_canvas, draw_everything, updated_tiles
 
+    draw_everything = draw_everything or input_handling.get_draw_everything()
+
     self = gs.player_solution
     if draw_everything:
         offscreen_canvas.Clear()

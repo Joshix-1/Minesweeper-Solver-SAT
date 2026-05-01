@@ -25,9 +25,16 @@ BUTTONS = frozenset((
 ))
 BUTTON_PRESSES: dict[int, bool] = {}
 
+_draw_everything: bool = False
 _powers = False
 def has_powers() -> bool:
     return _powers
+
+def get_draw_everything() -> bool:
+    global _draw_everything
+    value = _draw_everything
+    _draw_everything = False
+    return value
 
 def get_movement() -> tuple[int, int]:
     global dx, dy
@@ -69,7 +76,7 @@ def input_handling():
 
 
 def _input_handling():
-    global dx, dy, _powers
+    global dx, dy, _powers, _draw_everything
 
     import evdev
 
@@ -92,6 +99,8 @@ def _input_handling():
                 BUTTON_PRESSES[event.code] = True
                 buffer.append(event.code)
                 sleep = 1e-2
+            else:
+                print("button", event.code)
         elif event.type == evdev.ecodes.EV_ABS:
             if event.code == evdev.ecodes.ABS_HAT0X:
                 dx = int(event.value)
@@ -112,8 +121,7 @@ def _input_handling():
             buffer.clear()
             _powers = not _powers
             if not _powers:
-                import game
-                game.draw_everything = True
+                _draw_everything = True
 
         time.sleep(sleep)
 
