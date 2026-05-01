@@ -74,7 +74,7 @@ def input_handling():
             traceback.print_exc()
             time.sleep(1)
 
-device: "evdev.InputDevice" | None = None
+device: "evdev.InputDevice | None" = None
 
 def _input_handling():
     global dx, dy, _powers, _draw_everything, device
