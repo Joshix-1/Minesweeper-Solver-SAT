@@ -32,7 +32,7 @@ def get_boards_{i}():
 def init_game_state():
     gs.n_rows = 13
     gs.n_cols = 13
-    gs.n_mines = gs.n_rows * gs.n_cols // 6
+    gs.n_mines = 34
     for _ in gs.new_state():
         pass
 

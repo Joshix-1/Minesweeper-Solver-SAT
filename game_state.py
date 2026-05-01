@@ -5,7 +5,7 @@ from random_fair_boards import get_fair_mines
 
 n_rows: int = 13
 n_cols: int = 13
-n_mines: int = 42
+n_mines: int = 34
 
 board: Board = Board(n_rows, n_cols)
 player_solution = Solution(0, 0, 0)

@@ -32,9 +32,3 @@ def create_rgbmatrix() -> RGBMatrix:
 
     matrix = RGBMatrix(options = options)
     return matrix
-
-
-def draw_4x4_flag(x: int, y: int, drawpx: DrawPixelFn) -> None:
-    drawpx((x + 1, y + 1), (255, 0, 0))
-    drawpx((x + 2, y + 1), WHITE)
-    drawpx((x + 2, y + 2), WHITE)
