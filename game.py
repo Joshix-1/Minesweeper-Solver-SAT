@@ -127,7 +127,7 @@ def draw_board(*, swap_on_vsync: bool = True):
 
 
 def run_interactive_game_round():
-    global highlighted_pos, is_automatic_game
+    global highlighted_pos, is_automatic_game, offscreen_canvas
     highlighted_pos = (0, 0)
 
     init_game_state()
@@ -144,8 +144,11 @@ def run_interactive_game_round():
             x, y = highlighted_pos
             x *= 5
             y *= 5
+            # fast first draw:
             offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
             draw_value(x, y, value)
+            offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+            # this takes longer:
             updated_tiles.update(gs.reveal_node(highlighted_pos))
         if (
             input_handling.get_button(input_handling.BTN_02)
