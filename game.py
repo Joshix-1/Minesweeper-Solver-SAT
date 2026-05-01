@@ -216,8 +216,8 @@ def run_interactive_game_round():
 
     input_handling.vibrate_controller(
         strong_magnitude=0x1000,
-        weak_magnitude=0x1000,
-        duration_ms=200,
+        weak_magnitude=0xF000,
+        duration_ms=300,
     )
     input_handling.clear_inputs()
     while not input_handling.has_any_input():
