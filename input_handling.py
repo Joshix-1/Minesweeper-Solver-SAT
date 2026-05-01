@@ -135,6 +135,8 @@ def vibrate_controller(
         return
 
     try:
+        # SEE: https://python-evdev.readthedocs.io/en/latest/tutorial.html#injecting-an-ff-event-into-first-ff-capable-device-found
+#
         from evdev import ff, ecodes
 
         rumble = ff.Rumble(strong_magnitude=strong_magnitude, weak_magnitude=weak_magnitude)
