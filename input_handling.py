@@ -113,7 +113,7 @@ def _input_handling():
             _powers = not _powers
             if not _powers:
                 import game
-                game.updated_tiles.add((0, 0))
+                game.draw_everything = True
 
         time.sleep(sleep)
 
