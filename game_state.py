@@ -42,6 +42,10 @@ def new_state(initial: tuple[int, int] | None = None, force_solvable: bool = Fal
             else generate_fun_board(n_rows, n_cols, n_mines, initial, max_attempts=1000)
         )
 
+    for node in player_solution.grid.nodes:
+        if player_solution.grid.nodes[node]['solved']:
+            yield node
+
     player_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
     solver_solution = Solution(board.n_rows, board.n_cols, board.n_mines)
     yield from update_solutions((player_solution, solver_solution), board.reveal_node(initial))
