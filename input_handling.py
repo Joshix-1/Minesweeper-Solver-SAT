@@ -99,8 +99,6 @@ def _input_handling():
                 BUTTON_PRESSES[event.code] = True
                 buffer.append(event.code)
                 sleep = 1e-2
-            else:
-                print("button", event.code)
         elif event.type == evdev.ecodes.EV_ABS:
             if event.code == evdev.ecodes.ABS_HAT0X:
                 dx = int(event.value)
