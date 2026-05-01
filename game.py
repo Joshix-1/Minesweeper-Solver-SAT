@@ -140,16 +140,17 @@ def run_interactive_game_round():
             input_handling.get_button(input_handling.BTN_04)
             or input_handling.get_button(input_handling.BTN_04)
         ):
-            value = gs.board.value_at(highlighted_pos)
-            x, y = highlighted_pos
-            x *= 5
-            y *= 5
-            # fast first draw:
-            offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
-            draw_value(x, y, value)
-            offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
-            # this takes longer:
-            updated_tiles.update(gs.reveal_node(highlighted_pos))
+            for node in gs.reveal_node(node):
+                x, y = node
+                x *= 5
+                y *= 5
+                value = gs.board.value_at(node)
+                offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
+                draw_value(x, y, value)
+                offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+                offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
+                draw_value(x, y, value)
+                updated_tiles.add(node)
         if (
             input_handling.get_button(input_handling.BTN_02)
             or input_handling.get_button(input_handling.BTN_03)
