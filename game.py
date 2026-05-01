@@ -15,15 +15,15 @@ import game_state as gs
 if False:
     with open("test.py", "wt") as f:
         boards: list[set[frozenset[tuple[int, int]]]] = [set() for _ in range(13 * 13)]
-        for i in range(6760):
+        for i in range(16900):
             pos_idx = i % (13 * 13)
             initial = pos_idx // 13, pos_idx % 13
-            boards[pos_idx].add(frozenset(gs.generate_fair_board(13, 13, 30 + random.randrange(6), initial, max_depth=1, remainder_cutoff=16, max_attempts=1000).get_mines()))
+            boards[pos_idx].add(frozenset(gs.generate_fair_board(13, 13, 34, initial, max_depth=1, remainder_cutoff=16, max_attempts=1000).get_mines()))
 
         for i in range(len(boards)):
                 print(f"""
 def get_boards_{i}():
-    return {list(boards)[i]!r}
+    return {list(boards[i])!r}
 """, file=f, flush=True)
 
     sys.exit(0)
