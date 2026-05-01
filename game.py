@@ -131,7 +131,7 @@ def run_interactive_game_round():
     highlighted_pos = (0, 0)
 
     init_game_state()
-
+    just_started = True
 
     while gs.state == 0:
         draw_board()
@@ -140,6 +140,13 @@ def run_interactive_game_round():
             input_handling.get_button(input_handling.BTN_04)
             or input_handling.get_button(input_handling.BTN_04)
         ):
+            if just_started:
+                just_started = False
+                x, y = highlighted_pos
+                x *= 5
+                y *= 5
+                offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
+
             for node in gs.reveal_node(highlighted_pos):
                 x, y = node
                 x *= 5
