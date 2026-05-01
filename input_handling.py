@@ -111,6 +111,9 @@ def _input_handling():
         if buffer in _SEQUENCES:
             buffer.clear()
             _powers = not _powers
+            if not _powers:
+                import game
+                game.updated_tiles.add((0, 0))
 
         time.sleep(sleep)
 
