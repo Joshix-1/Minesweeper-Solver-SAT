@@ -125,7 +125,7 @@ def _input_handling():
         time.sleep(sleep)
 
 
-_effect_id: object | None = None^
+_effect_id: object | None = None
 
 def vibrate_controller(duration_ms: int = 1000):
     global _effect_id
