@@ -125,28 +125,40 @@ def _input_handling():
         time.sleep(sleep)
 
 
-def vibrate_controller():
+_effect_id: object | None = None^
+
+def vibrate_controller(duration_ms: int = 1000):
+    global _effect_id
+
     if not device:
         return
 
-    from evdev import ff, ecodes
+    try:
+        from evdev import ff, ecodes
 
-    rumble = ff.Rumble(strong_magnitude=0x0000, weak_magnitude=0xffff)
-    effect_type = ff.EffectType(ff_rumble_effect=rumble)
-    duration_ms = 1000
+        if _effect_id is None:
+            rumble = ff.Rumble(strong_magnitude=0x0000, weak_magnitude=0xffff)
+            effect_type = ff.EffectType(ff_rumble_effect=rumble)
 
-    effect = ff.Effect(
-        ecodes.FF_RUMBLE, -1, 0,
-        ff.Trigger(0, 0),
-        ff.Replay(duration_ms, 0),
-        effect_type
-    )
+            effect = ff.Effect(
+                ecodes.FF_RUMBLE, -1, 0,
+                ff.Trigger(0, 0),
+                ff.Replay(duration_ms, 0),
+                effect_type
+            )
 
-    repeat_count = 1
-    effect_id = device.upload_effect(effect)
-    device.write(ecodes.EV_FF, effect_id, repeat_count)
-    time.sleep(duration_ms / 1000)
-    device.erase_effect(effect_id)
+            _effect_id = device.upload_effect(effect)
+
+        repeat_count = 1
+        device.write(ecodes.EV_FF, _effect_id, repeat_count)
+
+        def erase_effect():
+            time.sleep(duration_ms / 1000)
+            device.erase_effect(_effect_id)
+
+        threading.Thread(target=erase_effect).start()
+    except Exception:
+        traceback.print_exc()
 
 
 def start() -> threading.Thread:
