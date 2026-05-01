@@ -125,14 +125,19 @@ def _input_handling():
         time.sleep(sleep)
 
 
-def vibrate_controller(duration_ms: int = 1000, repeat_count: int = 1):
+def vibrate_controller(
+    duration_ms: int = 1000,
+    repeat_count: int = 1,
+    strong_magnitude: int = 0x0000,
+    weak_magnitude: int = 0xffff,
+):
     if not device:
         return
 
     try:
         from evdev import ff, ecodes
 
-        rumble = ff.Rumble(strong_magnitude=0x0000, weak_magnitude=0xffff)
+        rumble = ff.Rumble(strong_magnitude=strong_magnitude, weak_magnitude=weak_magnitude)
         effect_type = ff.EffectType(ff_rumble_effect=rumble)
 
         effect = ff.Effect(
