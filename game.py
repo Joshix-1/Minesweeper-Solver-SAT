@@ -127,7 +127,7 @@ def draw_board(*, swap_on_vsync: bool = True):
 
 
 def run_interactive_game_round():
-    global highlighted_pos, is_automatic_game, offscreen_canvas
+    global highlighted_pos, is_automatic_game, offscreen_canvas, draw_everything
     highlighted_pos = (0, 0)
 
     init_game_state()
@@ -136,34 +136,6 @@ def run_interactive_game_round():
     while gs.state == 0:
         draw_board()
 
-        if (
-            input_handling.get_button(input_handling.BTN_04)
-            or input_handling.get_button(input_handling.BTN_04)
-        ):
-            if just_started:
-                just_started = False
-                x, y = highlighted_pos
-                x *= 5
-                y *= 5
-                offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
-
-            for node in gs.reveal_node(highlighted_pos):
-                x, y = node
-                x *= 5
-                y *= 5
-                value = gs.board.value_at(node)
-                offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
-                draw_value(x, y, value)
-                offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
-                offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
-                draw_value(x, y, value)
-                updated_tiles.add(node)
-        if (
-            input_handling.get_button(input_handling.BTN_02)
-            or input_handling.get_button(input_handling.BTN_03)
-        ):
-            gs.toggle_flag(highlighted_pos)
-            updated_tiles.add(highlighted_pos)
         if (
             input_handling.get_button(input_handling.BTN_09)
             or input_handling.get_button(input_handling.BTN_10)
@@ -178,6 +150,41 @@ def run_interactive_game_round():
                 (highlighted_pos[0] + dx) % gs.n_cols,
                 (highlighted_pos[1] + dy) % gs.n_rows,
             )
+            input_handling.clear_inputs()
+        elif (
+            input_handling.get_button(input_handling.BTN_02)
+            or input_handling.get_button(input_handling.BTN_03)
+        ):
+            gs.toggle_flag(highlighted_pos)
+            updated_tiles.add(highlighted_pos)
+            input_handling.clear_inputs()
+        elif (
+            input_handling.get_button(input_handling.BTN_04)
+            or input_handling.get_button(input_handling.BTN_04)
+        ):
+            if just_started:
+                x, y = highlighted_pos
+                x *= 5
+                y *= 5
+                offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
+                offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+                offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
+
+            for node in gs.reveal_node(highlighted_pos):
+                if just_started and node == highlighted_pos:
+                    continue
+                x, y = node
+                x *= 5
+                y *= 5
+                value = gs.board.value_at(node)
+                offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
+                draw_value(x, y, value)
+                offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
+                offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
+                draw_value(x, y, value)
+
+            just_started = False
+
 
         gs.state = check_solution(gs.board, gs.player_solution)
         time.sleep(1e-4)  # small sleep
