@@ -202,7 +202,10 @@ def run_interactive_game_round():
         print("lost")
 
 
-    input_handling.vibrate_controller()
+    input_handling.vibrate_controller(
+        strong_magnitude=0xFFFF if gs.state == -1 else 0x1000,
+        duration_ms=666,
+    )
     draw_board()
     time.sleep(5)  # long sleep
     updated_tiles.add(highlighted_pos)

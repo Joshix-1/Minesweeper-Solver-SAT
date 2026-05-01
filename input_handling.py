@@ -129,7 +129,7 @@ def vibrate_controller(
     duration_ms: int = 1000,
     repeat_count: int = 1,
     strong_magnitude: int = 0x0000,
-    weak_magnitude: int = 0xffff,
+    weak_magnitude: int = 0xFFFF,
 ):
     if not device:
         return
