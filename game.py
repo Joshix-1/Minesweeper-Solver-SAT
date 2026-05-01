@@ -170,6 +170,11 @@ def run_interactive_game_round():
                 offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
                 offscreen_canvas.SubFill(x, y, 4, 4, 0, 0, 0)
 
+            if just_started:
+                for node in gs.player_solution.grid.nodes:
+                    if gs.player_solution.grid.nodes[node]['solved']:
+                        updated_tiles.add(node)
+
             for node in gs.reveal_node(highlighted_pos):
                 if just_started and node == highlighted_pos:
                     continue
