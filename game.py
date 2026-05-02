@@ -231,6 +231,7 @@ def run_automatic_game_round():
     init_game_state()
 
     _time = time.perf_counter()
+    _just_started = True
 
     while gs.state == 0:
         if input_handling.has_any_input():
@@ -240,18 +241,22 @@ def run_automatic_game_round():
         if highlighted_pos:
             updated_tiles.add(highlighted_pos)
 
-        try:
-            move = next(sat_inspect_generator(gs.solver_solution))
-        except StopIteration:
-            print("sat_inspect did not find move")
-            nodes = gs.solver_solution.grid.nodes
-            unsolved_nodes = [
-                n for n in nodes if not nodes[n]['solved']
-            ]
-            if unsolved_nodes:
-                move = random.choice(unsolved_nodes)
-            else:
-                move = (random.randrange(gs.board.n_cols), random.randrange(gs.board.n_rows))
+        if _just_started:
+            move = (random.randrange(gs.board.n_cols), random.randrange(gs.board.n_rows))
+            _just_started = False
+        else:
+            try:
+                move = next(sat_inspect_generator(gs.solver_solution))
+            except StopIteration:
+                print("sat_inspect did not find move")
+                nodes = gs.solver_solution.grid.nodes
+                unsolved_nodes = [
+                    n for n in nodes if not nodes[n]['solved']
+                ]
+                if unsolved_nodes:
+                    move = random.choice(unsolved_nodes)
+                else:
+                    move = (random.randrange(gs.board.n_cols), random.randrange(gs.board.n_rows))
 
         highlighted_pos = move
 
