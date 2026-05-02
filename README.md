@@ -1,3 +1,7 @@
+This fork is for running minesweeper on a raspberry with a 64x64 LED matrix connected.
+
+---
+
 ## Introduction:
 * Minesweeper is a popular single-player logic/puzzle game. 
 
