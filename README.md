@@ -1,4 +1,7 @@
 This fork is for running minesweeper on a raspberry with a 64x64 LED matrix connected.
+The board is a 13x13 board with 34 mines which are placed fair.
+
+To leave auto-mode press any button on the front of the controller. Navigation works using the D-Pad. To reveal a field press 1 or 4, to flag mine press 2 or 3. To leave the manual mode, press 9 or 10. The joysticks and the buttons on the back do not do anything.
 
 ---
 
