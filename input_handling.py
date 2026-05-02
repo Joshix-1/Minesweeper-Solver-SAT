@@ -3,7 +3,6 @@ import traceback
 import os
 import time
 import threading
-import pathlib
 
 dx = 0
 dy = 0
@@ -82,15 +81,16 @@ def _input_handling():
     import evdev
 
     while True:
-        try:
-            path = next(pathlib.Path("/dev/input/").glob("event*"))
-            break
-        except StopIteration:
+        for name in evdev.list_devices():
+            device = evdev.InputDevice(name)
+            caps = device.capabilities()
+            if evdev.ecodes.EV_KEY in caps and evdev.ecodes.EV_ABS in caps:
+                break
+            device = None
+        if not device:
             time.sleep(1)
 
-    device = evdev.InputDevice(path.as_posix())
-
-    print("Starting listening to joysticks")
+    print("Got controller", device)
 
     for event in device.read_loop():
         sleep = 1e-6
