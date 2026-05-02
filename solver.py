@@ -57,7 +57,7 @@ class Solution:
 def sat_inspect_cell(solution, source, depth=1):
     # if node has not been solved, it has no information
     if not solution.grid.nodes[source]['solved']:
-        return
+        return ()
 
     # determine all nodes in the border and their adjacent unsolved nodes
     dfs_tree = nx.dfs_tree(solution.grid, source, depth_limit=depth)
@@ -76,7 +76,7 @@ def sat_inspect_cell(solution, source, depth=1):
             solution.nodes.remove(source)
         except Exception:
             traceback.print_exc()
-        return
+        return ()
 
     # map all unknown nodes to boolean variable indices
     variable_by_node = bidict()
@@ -140,7 +140,7 @@ def sat_inspect_cell(solution, source, depth=1):
 
     # yield flags first
     nodes.sort(key=lambda n: not solution.grid.nodes[n]['flagged'])
-    yield from nodes
+    return nodes
 
 
 def sat_inspect_generator(solution, depth=1):
