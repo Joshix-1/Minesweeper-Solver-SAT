@@ -87,8 +87,9 @@ def _input_handling():
             if evdev.ecodes.EV_KEY in caps and evdev.ecodes.EV_ABS in caps:
                 break
             device = None
-        if not device:
-            time.sleep(1)
+        if device:
+            break
+        time.sleep(1)
 
     print("Got controller", device)
 
